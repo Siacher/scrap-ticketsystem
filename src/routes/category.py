@@ -27,6 +27,7 @@ def insert():
 
     return jsonify({"message": "ok"})
 
+
 @category_route.route('/category/<_id>', methods=['DELETE'])
 def delete(_id):
     data = request.get_json()
@@ -38,7 +39,8 @@ def delete(_id):
 
     return jsonify({"message": "ok"})
 
-@category_route.route('/category/<_id>', methods="[PUT]")
+
+@category_route.route('/category/<_id>', methods=['PUT'])
 def update(_id):
     data = request.get_json()
 
