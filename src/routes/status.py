@@ -2,21 +2,21 @@ from flask import Blueprint, request, jsonify
 
 from . import db
 
-category_route = Blueprint('status', __name__)
+status_route = Blueprint('status', __name__)
 
 
-@category_route.route('/status', methods=['GET'])
+@status_route.route('/status', methods=['GET'])
 def get_all():
     result = db.get_all("status")
     return jsonify({"data": result})
 
 
-@category_route.route('/status/<_id>', methods=['GET'])
+@status_route.route('/status/<_id>', methods=['GET'])
 def get_one(_id):
     return jsonify(db.get_one_by_id("status", _id))
 
 
-@category_route.route('/status', methods=['POST'])
+@status_route.route('/status', methods=['POST'])
 def insert():
     data = request.get_json()
 
@@ -28,7 +28,7 @@ def insert():
     return jsonify({"message": "ok"})
 
 
-@category_route.route('/status/<_id>', methods=['DELETE'])
+@status_route.route('/status/<_id>', methods=['DELETE'])
 def delete(_id):
 
     with db.connection.cursor() as cursor:
@@ -39,7 +39,7 @@ def delete(_id):
     return jsonify({"message": "ok"})
 
 
-@category_route.route('/status/<_id>', methods=['PUT'])
+@status_route.route('/status/<_id>', methods=['PUT'])
 def update(_id):
     data = request.get_json()
 

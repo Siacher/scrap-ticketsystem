@@ -29,7 +29,7 @@ class Database:
 
             # create table prio
             cursor.execute(
-                """CREATE TABLE IF NOT EXISTS prio (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, prio INT, text VARCHAR(255), completion INT, color VARCHAR(255), icon VARCHAR(255))""")
+                """CREATE TABLE IF NOT EXISTS prio (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, prio INT, text VARCHAR(255), color VARCHAR(255), icon VARCHAR(255))""")
 
             # create table label
             cursor.execute(
