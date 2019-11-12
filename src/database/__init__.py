@@ -63,4 +63,16 @@ class Database:
             cursor.execute("""CREATE TABLE IF NOT EXISTS label_in_tabel_(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, ticket INT, label INT, FOREIGN KEY (ticket) REFERENCES ticket(id), FOREIGN KEY (label) REFERENCES label(id))""")
         self.connection.commit()
 
+    def get_all(self, table):
+        with self.connection.cursor() as cursor:
+            sql = f"SELECT * FROM {table}"
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            return result
 
+    def get_one_by_id(self, table, _id):
+        with self.connection.cursor() as cursor:
+            sql = f"SELECT * FROM {table} WHERE id =%s"
+            cursor.execute(sql, (_id,))
+            result = cursor.fetchone()
+            return result
