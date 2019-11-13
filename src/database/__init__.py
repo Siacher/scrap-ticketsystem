@@ -53,7 +53,7 @@ class Database:
 
             # create table comment
             cursor.execute(
-                """CREATE TABLE IF NOT EXISTS comment (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, header VARCHAR(255), text VARCHAR(500), created_by INT, FOREIGN KEY (created_by) REFERENCES user(id))""")
+                """CREATE TABLE IF NOT EXISTS comment (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, header VARCHAR(255), text VARCHAR(500), created_by INT, created_at DATETIME, FOREIGN KEY (created_by) REFERENCES user(id))""")
 
             # create table ticket
             cursor.execute(
