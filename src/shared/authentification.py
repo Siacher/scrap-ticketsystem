@@ -1,8 +1,7 @@
 from functools import wraps
 import jwt
-import os
 import datetime
-from flask import json, Response, request, g
+from flask import json, Response, request, g, redirect
 from src.routes.api import db
 
 
@@ -44,30 +43,19 @@ class Auth:
         @wraps(func)
         def decorated_auth(*args, **kwargs):
             if 'token' not in request.headers:
-                return Response(
-                    mimetype="application/json",
-                    response=json.dumps({'error': 'Authentication token is not available, please login to get one'}),
-                    status=400
-                )
+                return redirect('/login')
+
             token = request.headers.get('token')
             data = Auth.decode_token(token)
             if data['error']:
-                return Response(
-                    mimetype="application/json",
-                    response=json.dumps(data['error']),
-                    status=400
-                )
+                return redirect('/login')
 
             user_id = data['data']['user_id']
-            print(user_id)
             check_user = db.get_one_by_id(table="user", _id=user_id)
 
             if not check_user:
-                return Response(
-                    mimetype="application/json",
-                    response=json.dumps({'error': 'user does not exist, invalid token'}),
-                    status=400
-                )
+                return redirect('/login')
+
             g.user = {'id': user_id}
             return func(*args, **kwargs)
         return decorated_auth
