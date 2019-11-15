@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Bootstrap  -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <title>Scrap Ticketsystem</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">
+            <i class="material-icons">
+                build
+            </i>
+            &nbsp;
+            Scrap Ticketsystem
+        </a>
+    </nav>
+
+    <div class="container" style="margin-top: 30px;">
+        <div class="card-header">
+            Ticket anlegen
+        </div>
+        <div class="card-body">
+            <div id="loginForm">
+
+                <div class="form-group">
+                    <label>Überschrift</label>
+                    <input type="text" class="form-control" id="inputHeader">
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label>Kategorie</label>
+                            <select id="inputCategory" class="form-control">
+                                <option selected>Choose...</option>
+                                <option>...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label>Label</label>
+                            <select id="inputLabel" class="form-control">
+                                <option selected>Choose...</option>
+                                <option>...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label>Priorität</label>
+                            <select id="inputPrio" class="form-control">
+                                <option selected>Choose...</option>
+                                <option>...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Text</label>
+                    <textarea type="text" class="form-control span6" rows="6" id="inputText"></textarea>
+                </div>
+
+                <button class="btn btn-primary">Anlegen</button>
+            </div>
+        </div>
+</body>
+
+</html>

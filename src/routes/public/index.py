@@ -15,6 +15,11 @@ def login():
     return render_template('login.html')
 
 
+@index_route.route('/create_ticket', methods=['GET'])
+def create_ticket():
+    return render_template('create_ticket.html')
+
+
 @index_route.route('/login_req', methods=['GET'])
 @Auth.auth_required
 def log_req():
