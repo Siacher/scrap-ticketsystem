@@ -15,15 +15,25 @@
         async function postData(url = '', data = {}) {
             const response = await fetch(url, {
                 method: 'POST',
-                credentials: 'same-origin', // include, *same-origin, omit
+                credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(data) // body data type must match "Content-Type" header
+                body: JSON.stringify(data)
             });
-            return await response.json(); // parses JSON response into native JavaScript objects
+            return await response.json();
         }
 
+        async function getData(url = '', token) {
+            const response = await fetch(url, {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'token': token
+                },
+            });
+            return await response.json();
+        }
 
         async function login() {
 
@@ -32,16 +42,28 @@
                 'password': document.getElementById('inputPassword').value
             }
 
+            document.getElementById('buttonLogin').disabled = true;
+            document.getElementById('spinner').setAttribute('class', 'spinner-border');
+            document.getElementById('spinner').setAttribute('role', 'status');
+            document.getElementById('spinner').innerHTML = '<span class="sr-only">loading ...</span>';
+
             try {
                 const return_data = await postData('/api/v1/user/login', data);
-                
-                if(return_data['token']) {
+
+                if (return_data['token']) {
                     var token = return_data['token']
                     sessionStorage.setItem('token', token)
+
+                    const user_data = await getData('/api/v1/user/by_token', sessionStorage.getItem('token'))
+                    sessionStorage.setItem('user_id', user_data.id);
+                    sessionStorage.setItem('user_mail', user_data.mail);
+
                     document.location.href = "/"
                 } else {
                     alert("Login failed")
                 }
+
+
 
             } catch (error) {
                 console.error(error);
@@ -100,7 +122,14 @@
                                 <label for="exampleInputPassword1">Passwort</label>
                                 <input type="password" class="form-control" id="inputPassword" placeholder="Passwort">
                             </div>
-                            <button class="btn btn-primary" onclick="login()">Login</button>
+                            <div class="row">
+                                <div class="col">
+                                    <button class="btn btn-primary" id="buttonLogin" onclick="login()">Login</button>
+                                </div>
+                                <div class="col" id="spinner">
+
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="card-footer">

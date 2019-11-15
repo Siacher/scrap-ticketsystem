@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, flash
+from flask import Blueprint, request, jsonify, g
 import bcrypt
 
 from . import db
@@ -83,3 +83,10 @@ def login():
     db.connection.commit()
 
     return jsonify({'token': token})
+
+
+@user_route.route('/user/by_token', methods=['GET'])
+@Auth.auth_required
+def get_user_by_token():
+    _id =g.user['id']
+    return jsonify(db.get_one_by_id("user", _id))

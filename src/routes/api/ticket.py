@@ -16,6 +16,20 @@ def get_one(_id):
     return jsonify(db.get_one_by_id("ticket", _id))
 
 
+@ticket_route.route('/ticket/me', methods=['GET'])
+@Auth.auth_required
+def get_my_tickets(_id):
+    uid = g.user['id']
+    with db.connection.cursor() as cursor:
+        sql = "SELECT * FROM ticket WHERE 'created_by' = %S"
+        cursor.execute(sql, (uid))
+        # TODO: return values
+    db.connection.commit()
+
+
+    return jsonify(db.get_one_by_id("ticket", _id))
+
+
 @ticket_route.route('/ticket', methods=['POST'])
 def insert():
     data = request.get_json()

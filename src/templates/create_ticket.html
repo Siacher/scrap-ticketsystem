@@ -14,6 +14,97 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <title>Scrap Ticketsystem</title>
+
+    <script>
+
+        async function getData(url = '', token) {
+            const response = await fetch(url, {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'token': token
+                },
+            });
+            return await response.json();
+        }
+
+        async function postData(url = '', data = {}) {
+            const response = await fetch(url, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            return await response.json();
+        }
+
+        async function createDrowpdown(url, token, elm_id) {
+            getData(url, token)
+                .then((data) => {
+                    if (data['data'].length > 0) {
+                        for (var item of data['data']) {
+                            var elm = document.createElement('option')
+                            elm.innerHTML = `<span id="${item.id}" >${item.text}<span>`
+                            document.getElementById(elm_id).appendChild(elm)
+                        }
+                        document.getElementById(elm_id).disabled = false;
+                    }
+                })
+        }
+
+        function createTicket() {
+            var catElm = document.getElementById('inputCategory');
+            var prioElm = document.getElementById('inputPrio');
+
+            /**
+             * TODO: add more info 
+             */
+            var ticket = {
+                "header": document.getElementById('inputHeader').value,
+                "text": document.getElementById('inputText').value,
+                "category_id": catElm[catElm.selectedIndex].firstElementChild.id,
+                "status_id": null,
+                "comment_id": null,
+                "child_ticket": null,
+                "prio_id": prioElm[prioElm.selectedIndex].firstElementChild.id,
+                "assign_to": null,
+                "created_by": sessionStorage.getItem('user_id')
+            }
+
+            document.getElementById('buttonCreate').disabled = true;
+            document.getElementById('spinner').setAttribute('class', 'spinner-border');
+            document.getElementById('spinner').setAttribute('role', 'status');
+            document.getElementById('spinner').innerHTML = '<span class="sr-only">loading ...</span>';
+
+            postData('/api/v1/ticket', ticket)
+            .then((data) => {
+                if(data['message']) {
+                    document.location.href = '/'
+                }
+            })
+        }
+
+        if (!sessionStorage.getItem('token')) {
+            document.location.href = "/login";
+        } else {
+            var token = sessionStorage.getItem('token');
+
+            /**
+             * get categorys
+             */
+            createDrowpdown('/api/v1/category', token, 'inputCategory')
+
+            /**
+             * get prios
+             */
+            createDrowpdown('/api/v1/prio', token, 'inputPrio')
+        }
+
+    </script>
+
+
 </head>
 
 <body>
@@ -43,27 +134,16 @@
                     <div class="col">
                         <div class="form-group">
                             <label>Kategorie</label>
-                            <select id="inputCategory" class="form-control">
-                                <option selected>Choose...</option>
-                                <option>...</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Label</label>
-                            <select id="inputLabel" class="form-control">
-                                <option selected>Choose...</option>
-                                <option>...</option>
+                            <select id="inputCategory" class="form-control" disabled>
+                                <option selected>Auswählen</option>
                             </select>
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-group">
                             <label>Priorität</label>
-                            <select id="inputPrio" class="form-control">
-                                <option selected>Choose...</option>
-                                <option>...</option>
+                            <select id="inputPrio" class="form-control" disabled>
+                                <option selected>Auswählen</option>
                             </select>
                         </div>
                     </div>
@@ -74,7 +154,15 @@
                     <textarea type="text" class="form-control span6" rows="6" id="inputText"></textarea>
                 </div>
 
-                <button class="btn btn-primary">Anlegen</button>
+                <div class="row">
+                    <div class="col">
+                        <button class="btn btn-primary" id="buttonCreate" onclick="createTicket()">Anlegen</button>
+                    </div>
+                    <div class="col" id="spinner">
+
+                    </div>
+                </div>
+
             </div>
         </div>
 </body>
