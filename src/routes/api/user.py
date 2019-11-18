@@ -54,7 +54,7 @@ def update(_id):
     data = request.get_json()
 
     with db.connection.cursor() as cursor:
-        sql = "UPDATE status SET email=%s, password=%s, first_name=%s, last_name=%s  WHERE id=%s"
+        sql = 'UPDATE user SET email=%s, password=%s, first_name=%s, last_name=%s  WHERE id=%s'
         cursor.execute(sql, (data['email'], generate_hash(data['password']), data['first_name'], data['last_name'], _id))
     db.connection.commit()
 

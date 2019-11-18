@@ -1,5 +1,6 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, g
 
+from src.shared.authentification import Auth
 from . import db
 
 ticket_route = Blueprint('ticket', __name__)
@@ -18,16 +19,24 @@ def get_one(_id):
 
 @ticket_route.route('/ticket/me', methods=['GET'])
 @Auth.auth_required
-def get_my_tickets(_id):
+def get_my_tickets():
     uid = g.user['id']
     with db.connection.cursor() as cursor:
-        sql = "SELECT * FROM ticket WHERE 'created_by' = %S"
-        cursor.execute(sql, (uid))
-        # TODO: return values
-    db.connection.commit()
+        sql = "SELECT * FROM ticket WHERE created_by = %s"
+        cursor.execute(sql, (uid, ))
+        result = cursor.fetchall()
+        return jsonify(result)
 
 
-    return jsonify(db.get_one_by_id("ticket", _id))
+@ticket_route.route('/ticket/assingt', methods=['GET'])
+@Auth.auth_required
+def get_my_assingt_tickets():
+    uid = g.user['id']
+    with db.connection.cursor() as cursor:
+        sql = "SELECT * FROM ticket WHERE assign_to = %s"
+        cursor.execute(sql, (uid, ))
+        result = cursor.fetchall()
+        return jsonify(result)
 
 
 @ticket_route.route('/ticket', methods=['POST'])
