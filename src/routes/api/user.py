@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, flash
+from flask import Blueprint, request, jsonify, g
 import bcrypt
 
 from . import db
@@ -54,7 +54,7 @@ def update(_id):
     data = request.get_json()
 
     with db.connection.cursor() as cursor:
-        sql = "UPDATE status SET email=%s, password=%s, first_name=%s, last_name=%s  WHERE id=%s"
+        sql = 'UPDATE user SET email=%s, password=%s, first_name=%s, last_name=%s  WHERE id=%s'
         cursor.execute(sql, (data['email'], generate_hash(data['password']), data['first_name'], data['last_name'], _id))
     db.connection.commit()
 
@@ -83,3 +83,10 @@ def login():
     db.connection.commit()
 
     return jsonify({'token': token})
+
+
+@user_route.route('/user/by_token', methods=['GET'])
+@Auth.auth_required
+def get_user_by_token():
+    _id =g.user['id']
+    return jsonify(db.get_one_by_id("user", _id))

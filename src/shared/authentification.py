@@ -43,18 +43,18 @@ class Auth:
         @wraps(func)
         def decorated_auth(*args, **kwargs):
             if 'token' not in request.headers:
-                return redirect('/login')
+                return "no token provided"
 
             token = request.headers.get('token')
             data = Auth.decode_token(token)
             if data['error']:
-                return redirect('/login')
+                return "error in parsing token"
 
             user_id = data['data']['user_id']
             check_user = db.get_one_by_id(table="user", _id=user_id)
 
             if not check_user:
-                return redirect('/login')
+               return "please log in to continue"
 
             g.user = {'id': user_id}
             return func(*args, **kwargs)

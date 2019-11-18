@@ -61,6 +61,7 @@ class Database:
 
             # create table label_in_ticket
             cursor.execute("""CREATE TABLE IF NOT EXISTS label_in_tabel_(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, ticket INT, label INT, FOREIGN KEY (ticket) REFERENCES ticket(id), FOREIGN KEY (label) REFERENCES label(id))""")
+
         self.connection.commit()
 
     def get_all(self, table):
