@@ -21,17 +21,16 @@
 
     <script>
 
-        function createCategory() {
-            /*
-            var catElm = document.getElementById('inputCategory');
-            var prioElm = document.getElementById('inputPrio');
-            */
+        function createPrio() {
 
             /**
              * TODO: add more info
              */
-            var category = {
+            var prio = {
+                "prio": document.getElementById('inputPrio').value,
                 "text": document.getElementById('inputText').value,
+                "color": null,
+                "icon": null,
                 "created_by": sessionStorage.getItem('user_id')
             }
 
@@ -40,7 +39,7 @@
             document.getElementById('spinner').setAttribute('role', 'status');
             document.getElementById('spinner').innerHTML = '<span class="sr-only">loading ...</span>';
 
-            postData('/api/v1/category', category)
+            postData('/api/v1/prio', prio)
             .then((data) => {
                 if(data['message']) {
                     document.location.href = '/'
@@ -72,10 +71,15 @@
 
     <div class="container" style="margin-top: 30px;">
         <div class="card-header">
-            Kategorie anlegen
+            Neue Priorität anlegen
         </div>
         <div class="card-body">
             <div id="loginForm">
+
+                <div class="form-group">
+                    <label>Priorität</label>
+                    <input type="text" class="form-control" id="inputPrio">
+                </div>
 
                 <div class="form-group">
                     <label>Text</label>
@@ -84,7 +88,7 @@
 
                 <div class="row">
                     <div class="col">
-                        <button class="btn btn-primary" id="buttonCreate" onclick="createCategory()">Anlegen</button>
+                        <button class="btn btn-primary" id="buttonCreate" onclick="createPrio()">Anlegen</button>
                     </div>
                     <div class="col" id="spinner">
 
