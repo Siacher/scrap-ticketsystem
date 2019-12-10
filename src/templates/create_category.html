@@ -15,24 +15,23 @@
 
     <title>Scrap Ticketsystem</title>
 
+        {% assets "common_js" %}
+            <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+        {% endassets %}
+
     <script>
 
-        function createTicket() {
+        function createCategory() {
+            /*
             var catElm = document.getElementById('inputCategory');
             var prioElm = document.getElementById('inputPrio');
+            */
 
             /**
              * TODO: add more info
              */
-            var ticket = {
-                "header": document.getElementById('inputHeader').value,
+            var category = {
                 "text": document.getElementById('inputText').value,
-                "category_id": catElm[catElm.selectedIndex].firstElementChild.id,
-                "status_id": null,
-                "comment_id": null,
-                "child_ticket": null,
-                "prio_id": prioElm[prioElm.selectedIndex].firstElementChild.id,
-                "assign_to": null,
                 "created_by": sessionStorage.getItem('user_id')
             }
 
@@ -41,7 +40,7 @@
             document.getElementById('spinner').setAttribute('role', 'status');
             document.getElementById('spinner').innerHTML = '<span class="sr-only">loading ...</span>';
 
-            postData('/api/v1/ticket', ticket)
+            postData('/api/v1/category', category)
             .then((data) => {
                 if(data['message']) {
                     document.location.href = '/'
@@ -53,16 +52,6 @@
             document.location.href = "/login";
         } else {
             var token = sessionStorage.getItem('token');
-
-            /**
-             * get categorys
-             */
-            createDrowpdown('/api/v1/category', token, 'inputCategory')
-
-            /**
-             * get prios
-             */
-            createDrowpdown('/api/v1/prio', token, 'inputPrio')
         }
 
     </script>
@@ -83,34 +72,10 @@
 
     <div class="container" style="margin-top: 30px;">
         <div class="card-header">
-            Ticket anlegen
+            Kategorie anlegen
         </div>
         <div class="card-body">
             <div id="loginForm">
-
-                <div class="form-group">
-                    <label>Überschrift</label>
-                    <input type="text" class="form-control" id="inputHeader">
-                </div>
-
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Kategorie</label>
-                            <select id="inputCategory" class="form-control" disabled>
-                                <option selected>Auswählen</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Priorität</label>
-                            <select id="inputPrio" class="form-control" disabled>
-                                <option selected>Auswählen</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="form-group">
                     <label>Text</label>
@@ -119,7 +84,7 @@
 
                 <div class="row">
                     <div class="col">
-                        <button class="btn btn-primary" id="buttonCreate" onclick="createTicket()">Anlegen</button>
+                        <button class="btn btn-primary" id="buttonCreate" onclick="createCategory()">Anlegen</button>
                     </div>
                     <div class="col" id="spinner">
 
