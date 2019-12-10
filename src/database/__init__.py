@@ -77,7 +77,7 @@ class Database:
 
     def get_one_by_id(self, table, _id):
         with self.connection.cursor() as cursor:
-            sql = f"SELECT * FROM {table} WHERE id=%s"
-            cursor.execute(sql, _id)
+            sql = f"SELECT * FROM {table} WHERE id={_id}"
+            cursor.execute(sql)
             result = cursor.fetchone()
             return result

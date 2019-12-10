@@ -13,6 +13,7 @@ from src.routes.api.user import user_route
 from src.routes.api.company import company_route
 from src.routes.api.comment import comment_route
 from src.routes.api.ticket import ticket_route
+from src.routes.api.user_group import user_group_route
 
 
 class ScrapTicketSystem:
@@ -34,6 +35,7 @@ class ScrapTicketSystem:
         self.app.register_blueprint(company_route, url_prefix="/api/v1")
         self.app.register_blueprint(comment_route, url_prefix="/api/v1")
         self.app.register_blueprint(ticket_route, url_prefix="/api/v1")
+        self.app.register_blueprint(user_group_route, url_prefix="/api/v1")
 
         # assets
         bundles = {
@@ -53,7 +55,13 @@ class ScrapTicketSystem:
             'start_js': Bundle(
                 'js/start.js',
                 output='gen/start.js',
-                filters='jsmin')
+                filters='jsmin'),
+
+            'manage_user_js': Bundle(
+                'js/common.js',
+                'js/manageUser.js',
+                output='gen/start.js',),
+
         }
 
         assets = Environment(self.app)

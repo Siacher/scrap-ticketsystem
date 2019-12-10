@@ -206,3 +206,33 @@ def change_group():
     db.connection.commit()
 
     return jsonify({'message': message})
+
+
+@user_route.route('/user/group', methods=['GET'])
+@Auth.auth_required
+def group():
+    _id = g.user['id']
+
+    # user_id and group_id
+    data = request.get_json()
+
+    with db.connection.cursor() as cursor:
+
+        sql = 'SELECT ug.name FROM user as u JOIN user_in_group as uig on u.id = uig.user_id JOIN user_group as ug on uig.group_id = ug.id WHERE u.id=%s'
+        cursor.execute(sql, (_id,))
+        result = cursor.fetchall()
+
+        value = False
+        for item in result:
+            if item['name'] == "admin":
+                value = True
+
+        message = "not authorized"
+        if value:
+            sql = "SELECT u.id as user_id, u.first_name, u.last_name, u.email, ug.name, ug.id as group_id FROM user as u JOIN user_in_group as uig on u.id = uig.user_id JOIN user_group as ug on uig.group_id = ug.id"
+            cursor.execute(sql)
+            message = cursor.fetchall()
+
+    db.connection.commit()
+
+    return jsonify({'message': message})

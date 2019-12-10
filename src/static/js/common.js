@@ -13,12 +13,13 @@ async function getData(url = '', token) {
     return await response.json();
 }
 
-async function postData(url = '', data = {}) {
+async function postData(url = '', data = {}, token="") {
     const response = await fetch(url, {
         method: 'POST',
         credentials: 'same-origin',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'token': token
         },
         body: JSON.stringify(data)
     });

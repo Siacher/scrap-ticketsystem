@@ -40,7 +40,6 @@ def create_priority():
     return render_template('create_priority.html')
 
 
-@index_route.route('/login_req', methods=['GET'])
-@Auth.auth_required
+@index_route.route('/manage_user', methods=['GET'])
 def log_req():
-    return render_template('index.html')
+    return render_template('manage_user.html')
