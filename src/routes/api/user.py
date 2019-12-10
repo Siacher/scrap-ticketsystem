@@ -146,3 +146,63 @@ def is_admin():
                 value = True
 
         return jsonify({"message": str(value).lower()})
+
+
+@user_route.route('/user/add_group', methods=['POST'])
+@Auth.auth_required
+def add_group():
+    _id = g.user['id']
+
+    # user_id and group_id
+    data = request.get_json()
+
+    with db.connection.cursor() as cursor:
+
+        sql = 'SELECT ug.name FROM user as u JOIN user_in_group as uig on u.id = uig.user_id JOIN user_group as ug on uig.group_id = ug.id WHERE u.id=%s'
+        cursor.execute(sql, (_id,))
+        result = cursor.fetchall()
+
+        value = False
+        for item in result:
+            if item['name'] == "admin":
+                value = True
+
+        message = "not authorized"
+        if value:
+            sql = "INSERT INTO user_in_group(user_id, group_id) VALUES (%s, %s)"
+            cursor.execute(sql, (data['user_id'], data['group_id']))
+            message = "ok"
+
+    db.connection.commit()
+
+    return jsonify({'message': message})
+
+
+@user_route.route('/user/change_group', methods=['POST'])
+@Auth.auth_required
+def change_group():
+    _id = g.user['id']
+
+    # user_id and group_id, and new_group_id
+    data = request.get_json()
+
+    with db.connection.cursor() as cursor:
+
+        sql = 'SELECT ug.name FROM user as u JOIN user_in_group as uig on u.id = uig.user_id JOIN user_group as ug on uig.group_id = ug.id WHERE u.id=%s'
+        cursor.execute(sql, (_id,))
+        result = cursor.fetchall()
+
+        value = False
+        for item in result:
+            if item['name'] == "admin":
+                value = True
+
+        message = "not authorized"
+        if value:
+            sql = "UPDATE user_in_group SET user_id = %s, group_id = %s WHERE user_id = %s AND group_id = %s"
+            cursor.execute(sql, (data['user_id'], data['new_group_id'], data['user_id'], data['group_id'],))
+            message = "ok"
+
+    db.connection.commit()
+
+    return jsonify({'message': message})
