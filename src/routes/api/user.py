@@ -39,6 +39,9 @@ def insert():
 
         result = cursor.fetchone()
 
+        sql = "INSERT INTO user_in_group(user_id, group_id) VALUES (%s, %s)"
+        cursor.execute(sql, (result['id'], 2))
+
         print(data['password'])
         print(result['password'])
         print(check_hash(data['password'], result['password']))

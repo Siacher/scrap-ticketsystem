@@ -40,28 +40,29 @@ function editMode() {
 function save() {
     var role_cols = document.getElementsByClassName('role_name')
 
-    for (var node of role_cols) {
-        var role_id = node['id'].split("_")[0]
-        var user_id = node['id'].split("_")[1]
+    var loop = async _ => {
+        for (var node of role_cols) {
+            var role_id = node['id'].split("_")[0]
+            var user_id = node['id'].split("_")[1]
 
-        var e = node.firstChild;
-        var sel_role = e.options[e.selectedIndex];
+            var e = node.firstChild;
+            var sel_role = e.options[e.selectedIndex];
 
-        if (!(role_id == sel_role.id)) {
-            var new_role_id = sel_role.id;
-            var data = { "group_id": role_id, "user_id": user_id, "new_group_id": new_role_id }
+            if (!(role_id == sel_role.id)) {
+                var new_role_id = sel_role.id;
+                var data = { "group_id": role_id, "user_id": user_id, "new_group_id": new_role_id }
 
-            console.log(data)
+                console.log(data)
 
-            postData("/api/v1/user/change_group", data, sessionStorage.getItem('token')).then((data) => {
-                console.log(data);
-                if (data['message'] == "ok") {
-                    document.location.reload();
-                }
-            })
+                await postData("/api/v1/user/change_group", data, sessionStorage.getItem('token'))
 
+            }
         }
     }
+    loop().then(() => {
+        document.location.reload();
+    })
+
 }
 
 function cancel() {
