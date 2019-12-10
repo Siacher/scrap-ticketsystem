@@ -14,7 +14,11 @@ def get_all():
 
 @ticket_route.route('/ticket/<_id>', methods=['GET'])
 def get_one(_id):
-    return jsonify(db.get_one_by_id("ticket", _id))
+    with db.connection.cursor() as cursor:
+        sql = "SELECT * FROM ticket as t LEFT JOIN prio as p on t.prio_id = p.id LEFT JOIN category as c on t.category_id = c.id WHERE t.id = %s"
+        cursor.execute(sql, (_id,))
+        result = cursor.fetchall()
+        return jsonify(result)
 
 
 @ticket_route.route('/ticket/me', methods=['GET'])
@@ -22,7 +26,7 @@ def get_one(_id):
 def get_my_tickets():
     uid = g.user['id']
     with db.connection.cursor() as cursor:
-        sql = "SELECT * FROM ticket WHERE created_by = %s"
+        sql = "SELECT * FROM ticket as t LEFT JOIN prio as p on t.prio_id = p.id LEFT JOIN category as c on t.category_id = c.id WHERE t.created_by = %s"
         cursor.execute(sql, (uid, ))
         result = cursor.fetchall()
         return jsonify(result)
@@ -33,7 +37,7 @@ def get_my_tickets():
 def get_my_assingt_tickets():
     uid = g.user['id']
     with db.connection.cursor() as cursor:
-        sql = "SELECT * FROM ticket WHERE assign_to = %s"
+        sql = "SELECT * FROM ticket as t LEFT JOIN prio as p on t.prio_id = p.id LEFT JOIN category as c on t.category_id = c.id WHERE t.assign_to = %s"
         cursor.execute(sql, (uid, ))
         result = cursor.fetchall()
         return jsonify(result)

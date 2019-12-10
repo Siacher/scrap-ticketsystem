@@ -34,7 +34,7 @@ def delete(_id):
 
     with db.connection.cursor() as cursor:
         sql = "DELETE FROM category WHERE id =%s"
-        cursor.execute(sql, (_id, ))
+        cursor.execute(sql, (_id))
     db.connection.commit()
 
     return jsonify({"message": "ok"})

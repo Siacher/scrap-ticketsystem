@@ -15,6 +15,16 @@ def login():
     return render_template('login.html')
 
 
+@index_route.route('/register', methods=['GET'])
+def register():
+    return render_template('register.html')
+
+
+@index_route.route('/ticket/<_id>', methods=['GET'])
+def ticket(_id):
+    return render_template('ticket.html')
+
+
 @index_route.route('/create_ticket', methods=['GET'])
 def create_ticket():
     return render_template('create_ticket.html')

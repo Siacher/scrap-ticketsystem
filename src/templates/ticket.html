@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Bootstrap  -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <title>Scrap Ticketsystem</title>
+
+    <script>
+        if (!sessionStorage.getItem('token')) {
+            document.location.href = "/login"
+        }
+
+        async function getData(url = '', token) {
+            const response = await fetch(url, {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'token': token
+                },
+            });
+            return await response.json();
+        }
+
+        function init() {
+            var ticket_id = document.location.href.split("/")[document.location.href.split("/").length - 1]
+
+            getData(`/api/v1/ticket/${ticket_id}`, sessionStorage.getItem('token'))
+                .then((data) => {
+                    console.log(data);
+                    document.getElementById("ticket_header").innerHTML = data[0].header;
+                    document.getElementById("inputPrio").innerHTML = `<option selected>${data[0]["p.text"]}</option>`
+                    document.getElementById("inputCategory").innerHTML = `<option selected>${data[0]["c.text"]}</option>`
+                    document.getElementById("inputText").innerHTML = `${data[0]["text"]}`
+                })
+        }
+
+
+    </script>
+</head>
+
+<body onload="init()">
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">
+            <i class="material-icons">
+                build
+            </i>
+            &nbsp;
+            Scrap Ticketsystem
+        </a>
+    </nav>
+
+    <div class="container" style="margin-top: 30px;">
+        <div class="container" style="margin-top: 30px;">
+            <div class="card-header" id="ticket_header">
+
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label>Kategorie</label>
+                            <select id="inputCategory" class="form-control" disabled>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label>Priorität</label>
+                            <select id="inputPrio" class="form-control" disabled>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Text</label>
+                    <textarea type="text" class="form-control span6" rows="6" id="inputText" disabled></textarea>
+                </div>
+
+               <!-- <div class="row">
+                    <div class="col">
+                        <button class="btn btn-primary" id="buttonCreate" onclick="createTicket()">Change</button>
+                    </div>
+                    <div class="col" id="spinner">
+
+                    </div>
+                </div> -->
+
+            </div>
+        </div>
+</body>
+
+</html>

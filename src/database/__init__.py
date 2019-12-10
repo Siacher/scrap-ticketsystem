@@ -62,6 +62,10 @@ class Database:
             # create table label_in_ticket
             cursor.execute("""CREATE TABLE IF NOT EXISTS label_in_tabel_(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, ticket INT, label INT, FOREIGN KEY (ticket) REFERENCES ticket(id), FOREIGN KEY (label) REFERENCES label(id))""")
 
+
+            # create roles
+            #cursor.execute("""INSERT INTO user_group (name) VALUES ('admin'), ('default'), ('processor')""")
+
         self.connection.commit()
 
     def get_all(self, table):
@@ -73,7 +77,7 @@ class Database:
 
     def get_one_by_id(self, table, _id):
         with self.connection.cursor() as cursor:
-            sql = f"SELECT * FROM {table} WHERE id =%s"
-            cursor.execute(sql, (_id,))
+            sql = f"SELECT * FROM {table} WHERE id=%s"
+            cursor.execute(sql, _id)
             result = cursor.fetchone()
             return result
