@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_login import LoginManager
 
 # public routes
 from src.routes.public.index import index_route
@@ -21,7 +20,6 @@ class ScrapTicketSystem:
         # init app
         self.app = Flask(__name__)
         self.app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
-        self.login_manager = LoginManager(self.app)
 
         # public routes
         self.app.register_blueprint(index_route)
