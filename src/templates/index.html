@@ -29,15 +29,17 @@
 
         getData('/api/v1/ticket/me', sessionStorage.getItem('token'))
             .then((data) => {
+                console.log(data);
                 for (const [index, item] of data.entries()) {
-                    document.getElementById('tableMyTickets').innerHTML += `<tr onclick="window.location='/ticket/${item['id']}'"> <th scope="row">${index}</th> <td>${item['header']}</td> <td>${item['text']}</td></tr>`
+                    document.getElementById('tableMyTickets').innerHTML += `<tr onclick="window.location='/ticket/${item['id']}'"> <td>${item['header']}</td> <td style="color: ${item['color']}">${item['p.text']}</td>  <td>${item['c.text']}</td> </tr>`
                 }
             })
 
-            getData('/api/v1/ticket/assingt', sessionStorage.getItem('token'))
+        getData('/api/v1/ticket/assingt', sessionStorage.getItem('token'))
             .then((data) => {
+                console.log(data);
                 for (const [index, item] of data.entries()) {
-                    document.getElementById('tableAssingtTickets').innerHTML += `<tr onclick="window.location='/ticket/${item['id']}'"> <th scope="row">${index}</th> <td>${item['header']}</td> <td>${item['text']}</td></tr>`
+                    document.getElementById('tableAssingtTickets').innerHTML += `<tr onclick="window.location='/ticket/${item['id']}'"> <td>${item['header']}</td> <td style="color: ${item['color']}">${item['p.text']}</td>  <td>${item['c.text']}</td> </tr>`
                 }
             })
 
@@ -69,9 +71,9 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th scope="col">#</th>
                                 <th scope="col">Header</th>
-                                <th scope="col">Text</th>
+                                <th scope="col">Prio</th>
+                                <th scope="col">Category</th>
                             </tr>
                         </thead>
                         <tbody id="tableMyTickets">
@@ -85,9 +87,9 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th scope="col">#</th>
                                 <th scope="col">Header</th>
-                                <th scope="col">Text</th>
+                                <th scope="col">Prio</th>
+                                <th scope="col">Category</th>
                             </tr>
                         </thead>
                         <tbody id="tableAssingtTickets">
