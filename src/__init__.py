@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_assets import Bundle, Environment
 
 # public routes
 from src.routes.public.index import index_route
@@ -33,6 +34,33 @@ class ScrapTicketSystem:
         self.app.register_blueprint(company_route, url_prefix="/api/v1")
         self.app.register_blueprint(comment_route, url_prefix="/api/v1")
         self.app.register_blueprint(ticket_route, url_prefix="/api/v1")
+
+        # assets
+        bundles = {
+
+            'create_js': Bundle(
+                'js/common.js',
+                'js/create_ticket.js',
+                'js/create_category.js',
+                output='gen/create.js',
+                filters='jsmin'),
+
+            'common_js': Bundle(
+                'js/common.js',
+                output='gen/create.js',
+                filters='jsmin'),
+
+            'start_js': Bundle(
+                'js/start.js',
+                output='gen/start.js',
+                filters='jsmin')
+        }
+
+        assets = Environment(self.app)
+        assets.debug = True
+        assets.init_app(self.app)
+
+        assets.register(bundles)
 
     def run(self):
         self.app.run(port=3000)
