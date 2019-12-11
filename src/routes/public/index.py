@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, flash
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, logout_user
 from src.routes.api import db
 from . import LUser
 from src.shared.authentification import Auth
@@ -13,39 +13,58 @@ index_route = Blueprint('index', __name__)
 def check_hash(password, _hash):
     return bcrypt.checkpw(bytes(password, 'utf-8'), bytes(_hash, 'utf-8'))
 
+
 @index_route.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
+    if not current_user.is_authenticated:
+        return redirect(url_for('index.login'))
+    else:
+        with db.connection.cursor() as cursor:
+            sql = "SELECT * FROM ticket as t LEFT JOIN prio as p on t.prio_id = p.id LEFT JOIN category as c on t.category_id = c.id WHERE t.created_by = %s"
+            cursor.execute(sql, (current_user.id,))
+            my_tickets = cursor.fetchall()
+
+            sql = "SELECT * FROM ticket as t LEFT JOIN prio as p on t.prio_id = p.id LEFT JOIN category as c on t.category_id = c.id WHERE t.assign_to = %s"
+            cursor.execute(sql, (current_user.id,))
+            ass_tickets = cursor.fetchall()
+
+    return render_template('index.html', my_tickets=my_tickets, ass_tickets=ass_tickets)
 
 
 @index_route.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index.index'))
+    else:
+        form = LoginForm()
+        if form.validate_on_submit():
+            with db.connection.cursor() as cursor:
+                sql = "SELECT * FROM user WHERE email=%s"
+                cursor.execute(sql, (form.email.data,))
+                user = cursor.fetchone()
 
-    form = LoginForm()
-    if form.validate_on_submit():
-        with db.connection.cursor() as cursor:
-            sql = "SELECT * FROM user WHERE email=%s"
-            cursor.execute(sql, (form.email.data,))
-            user = cursor.fetchone()
+                if user is None:
+                    flash('Invalid username or password')
+                    print("no user")
+                    return redirect(url_for('index.login'))
 
-            if user is None:
-                flash('Invalid username or password')
-                print("no user")
-                return redirect(url_for('index.login'))
+                if check_hash(form.passwort.data, user['password']):
+                    flash('Invalid username or password')
+                    print("wrong password")
+                    return redirect(url_for('index.login'))
 
-            if check_hash(form.passwort.data, user['password']):
-                flash('Invalid username or password')
-                print("wrong password")
-                return redirect(url_for('index.login'))
+                user_login = LUser(user['id'], user['email'], user['first_name'], user['last_name'], user['password'])
 
-            user_login = LUser(user['id'], user['email'], user['first_name'], user['last_name'], user['password'])
-
-            login_user(user_login, remember=form.remember_me.data)
-            return redirect(url_for('index.index'))
+                login_user(user_login, remember=form.remember_me.data)
+                return redirect(url_for('index.index'))
 
     return render_template('login.html', form=form)
+
+
+@index_route.route('/logout', methods=['GET'])
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 
 @index_route.route('/register', methods=['GET'])
