@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Bootstrap  -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <title>Scrap Ticketsystem</title>
+
+    <script>
+        async function postData(url = '', data = {}) {
+            const response = await fetch(url, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            return await response.json();
+        }
+
+        async function getData(url = '', token) {
+            const response = await fetch(url, {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'token': token
+                },
+            });
+            return await response.json();
+        }
+
+        async function login() {
+
+            var data = {
+                'email': document.getElementById('inputEmail').value,
+                'password': document.getElementById('inputPassword').value
+            }
+
+            document.getElementById('buttonLogin').disabled = true;
+            document.getElementById('spinner').setAttribute('class', 'spinner-border');
+            document.getElementById('spinner').setAttribute('role', 'status');
+            document.getElementById('spinner').innerHTML = '<span class="sr-only">loading ...</span>';
+
+            try {
+                const return_data = await postData('/api/v1/user/login', data);
+
+                if (return_data['token']) {
+                    var token = return_data['token']
+                    sessionStorage.setItem('token', token)
+
+                    const user_data = await getData('/api/v1/user/by_token', sessionStorage.getItem('token'))
+                    sessionStorage.setItem('user_id', user_data.id);
+                    sessionStorage.setItem('user_mail', user_data.mail);
+
+                    document.location.href = "/"
+                } else {
+                    alert("Login failed")
+                }
+
+
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">
+            <i class="material-icons">
+                build
+            </i>
+        </a>
+    </nav>
+
+    <div class="jumbotron text-center">
+        <h1>Scrap Ticketsystem</h1>
+    </div>
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col">
+                <h4>Hier ein Blogbeitrag</h4>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                    et
+                    dolore magna aliqua. Lacinia at quis risus sed vulputate odio ut enim blandit. Ut lectus arcu
+                    bibendum
+                    at varius vel. Tincidunt vitae semper quis lectus nulla at volutpat. Risus viverra adipiscing at in
+                    tellus integer feugiat scelerisque varius. Sit amet venenatis urna cursus eget nunc. Cursus sit amet
+                    dictum sit amet. Purus in mollis nunc sed id semper risus in. Faucibus et molestie ac feugiat sed
+                    lectus
+                    vestibulum mattis. Fames ac turpis egestas sed tempus urna et pharetra. Sed euismod nisi porta
+                    lorem.
+                    Quam lacus suspendisse faucibus interdum posuere lorem ipsum dolor sit. Vel fringilla est
+                    ullamcorper
+                    eget nulla facilisi. Placerat vestibulum lectus mauris ultrices. Mi sit amet mauris commodo quis.
+                </p>
+            </div>
+
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        Login
+                    </div>
+                    <div class="card-body">
+                        <div id="loginForm">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Email</label>
+                                <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp"
+                                    placeholder="Email">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Passwort</label>
+                                <input type="password" class="form-control" id="inputPassword" placeholder="Passwort">
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <button class="btn btn-primary" id="buttonLogin" onclick="login()">Login</button>
+                                </div>
+                                <div class="col" id="spinner">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col-sm text-left">
+                                <a href="">AGB</a>
+                            </div>
+                            <div class="col-sm text-right">
+                                <p>noch kein Account ? <a href="/register">Registieren</a></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
