@@ -5,9 +5,13 @@ from . import LUser
 from src.shared.authentification import Auth
 import bcrypt
 
-from src.forms import LoginForm, CreateTicketForm
+from src.forms import LoginForm, RegisterForm, CreateTicketForm
 
 index_route = Blueprint('index', __name__)
+
+
+def generate_hash(password):
+    return bcrypt.hashpw(bytes(password, 'utf-8'), bcrypt.gensalt(14))
 
 
 def check_hash(password, _hash):
@@ -67,9 +71,26 @@ def logout():
     return redirect(url_for('index.login'))
 
 
-@index_route.route('/register', methods=['GET'])
+@index_route.route('/register', methods=['GET', 'POST'])
 def register():
-    return render_template('register.html')
+    form = RegisterForm()
+    if form.validate_on_submit():
+        with db.connection.cursor() as cursor:
+            sql = "INSERT INTO user(email, password, first_name, last_name) VALUES (%s, %s, %s, %s)"
+            cursor.execute(sql, (form.email.data, generate_hash(form.passwort.data), form.first_name.data, form.last_name.data))
+
+            sql = "SELECT * FROM user WHERE email=%s"
+            cursor.execute(sql, (form.email.data,))
+
+            result = cursor.fetchone()
+
+            sql = "INSERT INTO user_in_group(user_id, group_id) VALUES (%s, %s)"
+            cursor.execute(sql, (result['id'], 2))
+
+            db.connection.commit()
+            return redirect(url_for('index.login'))
+
+    return render_template('register.html', form=form)
 
 
 @index_route.route('/ticket/<_id>', methods=['GET'])
@@ -82,9 +103,31 @@ def ticket(_id):
     return render_template('ticket.html', ticket=result)
 
 
-@index_route.route('/create_ticket', methods=['GET'])
+@index_route.route('/create_ticket', methods=['GET', 'POST'])
 def create_ticket():
+    prio_return = db.get_all("prio")
+    prio = [(i['id'], i['text']) for i in prio_return]
+
+    category_return = db.get_all("category")
+    category = [(i['id'], i['text']) for i in category_return]
+
     form = CreateTicketForm()
+    form.prio.choices = prio
+    form.category.choices = category
+
+    if form.submit():
+        header = form.header.data
+        text = form.text.data
+        prio_id = form.prio.data
+        category_id = form.category.data
+        user_id = current_user.id
+
+        with db.connection.cursor() as cursor:
+            sql = "INSERT INTO ticket(header, text,  category_id, prio_id, created_by) VALUES (%s, %s, %s, %s, %s)"
+            cursor.execute(sql, (header, text, category_id, prio_id, user_id))
+        db.connection.commit()
+        return redirect(url_for('index.index'))
+
     return render_template('create_ticket.html', form=form)
 
 
