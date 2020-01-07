@@ -2,32 +2,46 @@
 
 {% block content %}
 
-    <div class="container" style="margin-top: 30px;">
-        <div class="row justify-content-center">
-            <div class="col">
-                <h4>Meine Tickets</h4>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th scope="col">Header</th>
-                        <th scope="col">Prio</th>
-                        <th scope="col">Category</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for ticket in my_tickets %}
-                        <tr onclick="window.location='/ticket/{{ ticket['id'] }}'">
-                            <td>{{ ticket['header'] }}</td>
-                            <td style="color: {{ ticket['color'] }}">{{ ticket['p.text'] }}</td>
-                            <td> {{ ticket['c.text'] }} </td>
-                        </tr>`
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="col">
-                <h4>Zu bearbeitende Tickets</h4>
-                <div>
+    <div class="row">
+        <div class="col-2-sm">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Ticket anlegen</a>
+                </li>
+                {% if user_group == "admin" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Alle Tickets anzeigen</a>
+                    </li>
+                    <li class="nav-item">
+                        <hr>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">User verwalten</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Kategorien verwalten</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Prioritäten verwalten</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Statie verwalten</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                    <hr>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-10-sm">
+
+
+            <div class="row justify-content-center">
+                <div class="col">
+                    <h4>Meine Tickets</h4>
                     <table class="table">
                         <thead>
                         <tr>
@@ -37,18 +51,45 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for ticket in ass_tickets %}
-                        <tr onclick="window.location='/ticket/{{ ticket['id'] }}'">
-                            <td>{{ ticket['header'] }}</td>
-                            <td style="color: {{ ticket['color'] }}">{{ ticket['p.text'] }}</td>
-                            <td> {{ ticket['c.text'] }} </td>
-                        </tr>`
-                    {% endfor %}
+                        {% for ticket in my_tickets %}
+                            <tr onclick="window.location='/ticket/{{ ticket['id'] }}'">
+                                <td>{{ ticket['header'] }}</td>
+                                <td style="color: {{ ticket['color'] }}">{{ ticket['p.text'] }}</td>
+                                <td> {{ ticket['c.text'] }} </td>
+                            </tr>`
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>
+                <div class="col">
+                    <h4>Zu bearbeitende Tickets</h4>
+                    <div>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">Header</th>
+                                <th scope="col">Prio</th>
+                                <th scope="col">Category</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for ticket in ass_tickets %}
+                                <tr onclick="window.location='/ticket/{{ ticket['id'] }}'">
+                                    <td>{{ ticket['header'] }}</td>
+                                    <td style="color: {{ ticket['color'] }}">{{ ticket['p.text'] }}</td>
+                                    <td> {{ ticket['c.text'] }} </td>
+                                </tr>`
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
 
+                </div>
             </div>
         </div>
+
+
     </div>
+    </div>
+
 {% endblock %}

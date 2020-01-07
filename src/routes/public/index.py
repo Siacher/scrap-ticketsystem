@@ -24,6 +24,17 @@ def index():
         return redirect(url_for('index.login'))
     else:
         with db.connection.cursor() as cursor:
+            sql = "SELECT ug.name, ug.id FROM user_group as ug JOIN user_in_group uig on ug.id = uig.group_id JOIN user u on uig.user_id = u.id WHERE u.id = %s"
+            cursor.execute(sql, (current_user.id,))
+            group = cursor.fetchone()
+
+            user_group = 'default'
+            try:
+                if group['name']:
+                    user_group = group['name']
+            except TypeError as NOUSERGROUP:
+                print(NOUSERGROUP)
+
             sql = "SELECT * FROM ticket as t LEFT JOIN prio as p on t.prio_id = p.id LEFT JOIN category as c on t.category_id = c.id WHERE t.created_by = %s"
             cursor.execute(sql, (current_user.id,))
             my_tickets = cursor.fetchall()
@@ -32,7 +43,7 @@ def index():
             cursor.execute(sql, (current_user.id,))
             ass_tickets = cursor.fetchall()
 
-    return render_template('index.html', my_tickets=my_tickets, ass_tickets=ass_tickets)
+    return render_template('index.html', my_tickets=my_tickets, ass_tickets=ass_tickets, user_group=user_group)
 
 
 @index_route.route('/login', methods=['GET', 'POST'])
