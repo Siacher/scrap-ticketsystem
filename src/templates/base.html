@@ -1,26 +1,27 @@
 <html>
-    <head>
-        {% if title %}
+<head>
+    {% if title %}
         <title>{{ title }}</title>
-        {% else %}
+    {% else %}
         <title>scrap-ticketsystem</title>
-        {% endif %}
+    {% endif %}
 
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 
-    </head>
-    <body>
-        <div class="container">
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
+</head>
+<body>
+
+<div class="container">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
             <ul>
                 {% for message in messages %}
-                <li>{{ message }}</li>
+                    <li>{{ message }}</li>
                 {% endfor %}
             </ul>
-            {% endif %}
-            {% endwith %}
-            {% block content %}{% endblock %}
-        </div>
-    </body>
+        {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+</div>
+</body>
 </html>

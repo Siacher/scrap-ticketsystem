@@ -126,7 +126,7 @@ def create_ticket():
     form.prio.choices = prio
     form.category.choices = category
 
-    if form.submit():
+    if form.is_submitted():
         header = form.header.data
         text = form.text.data
         prio_id = form.prio.data
@@ -153,5 +153,10 @@ def create_priority():
 
 
 @index_route.route('/manage_user', methods=['GET'])
-def log_req():
+def manage_user():
+    with db.connection.cursor() as cursor:
+        sql = 'SELECT u.first_name , u.last_name, u.email, ug.id, ug.name FROM user as u JOIN user_in_group as uig on u.id = uig.user_id JOIN user_group as ug on uig.group_id = ug.id'
+        cursor.execute(sql)
+        result = cursor.fetchall()
+    db.connection.commit()
     return render_template('manage_user.html')
