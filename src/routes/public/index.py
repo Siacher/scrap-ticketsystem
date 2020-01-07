@@ -64,14 +64,13 @@ def login():
                     return redirect(url_for('index.login'))
 
                 if check_hash(form.passwort.data, user['password']):
-                    flash('Invalid username or password')
-                    print("wrong password")
-                    return redirect(url_for('index.login'))
+                    user_login = LUser(user['id'], user['email'], user['first_name'], user['last_name'], user['password'])
+                    login_user(user_login, remember=form.remember_me.data)
+                    return redirect(url_for('index.index'))
 
-                user_login = LUser(user['id'], user['email'], user['first_name'], user['last_name'], user['password'])
-
-                login_user(user_login, remember=form.remember_me.data)
-                return redirect(url_for('index.index'))
+                flash('Invalid username or password')
+                print("wrong password")
+                return redirect(url_for('index.login'))
 
     return render_template('login.html', form=form)
 
