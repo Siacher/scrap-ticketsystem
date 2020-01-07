@@ -5,7 +5,7 @@ from . import LUser
 from src.shared.authentification import Auth
 import bcrypt
 
-from src.forms import LoginForm, RegisterForm, CreateTicketForm
+from src.forms import LoginForm, RegisterForm, CreateTicketForm, ManageUserForm
 
 index_route = Blueprint('index', __name__)
 
@@ -64,7 +64,8 @@ def login():
                     return redirect(url_for('index.login'))
 
                 if check_hash(form.passwort.data, user['password']):
-                    user_login = LUser(user['id'], user['email'], user['first_name'], user['last_name'], user['password'])
+                    user_login = LUser(user['id'], user['email'], user['first_name'], user['last_name'],
+                                       user['password'])
                     login_user(user_login, remember=form.remember_me.data)
                     return redirect(url_for('index.index'))
 
@@ -87,7 +88,8 @@ def register():
     if form.validate_on_submit():
         with db.connection.cursor() as cursor:
             sql = "INSERT INTO user(email, password, first_name, last_name) VALUES (%s, %s, %s, %s)"
-            cursor.execute(sql, (form.email.data, generate_hash(form.passwort.data), form.first_name.data, form.last_name.data))
+            cursor.execute(sql, (
+            form.email.data, generate_hash(form.passwort.data), form.first_name.data, form.last_name.data))
 
             sql = "SELECT * FROM user WHERE email=%s"
             cursor.execute(sql, (form.email.data,))
@@ -151,11 +153,42 @@ def create_priority():
     return render_template('create_priority.html')
 
 
-@index_route.route('/manage_user', methods=['GET'])
+@index_route.route('/manage_user', methods=['GET', 'POST'])
 def manage_user():
+    user_group_return = db.get_all("user_group")
+    user_group = [(i['id'], i['name']) for i in user_group_return]
+    user_group.insert(0, (0, ""))
+
+    user_forms = []
+
+    update = False
+
     with db.connection.cursor() as cursor:
-        sql = 'SELECT u.first_name , u.last_name, u.email, ug.id, ug.name FROM user as u JOIN user_in_group as uig on u.id = uig.user_id JOIN user_group as ug on uig.group_id = ug.id'
+        sql = 'SELECT u.id, u.first_name , u.last_name, u.email, ug.id as group_id, ug.name FROM user as u JOIN user_in_group as uig on u.id = uig.user_id JOIN user_group as ug on uig.group_id = ug.id'
         cursor.execute(sql)
-        result = cursor.fetchall()
+        users = cursor.fetchall()
+
+        for user in users:
+            form = ManageUserForm(prefix=user['email'])
+            form.first_name.label = user['first_name']
+            form.last_name.label = user['last_name']
+            form.email.label = user['email']
+            form.user_group.choices = user_group
+            form.user_group.default = user['group_id']
+            form.user_group.label = user['name']
+            user_forms.append(form)
+
+            if form.submit.data and form.is_submitted():
+                sql = "SELECT id FROM user WHERE email = %s"
+                cursor.execute(sql, (user['email'],))
+                user_id = cursor.fetchone()['id']
+
+                sql = "UPDATE user_in_group SET group_id = %s WHERE user_id = %s AND group_id = %s"
+                cursor.execute(sql, (form.user_group.data, user_id, user['group_id']))
+                update = True
     db.connection.commit()
-    return render_template('manage_user.html')
+
+    if update:
+        redirect(url_for('index.manage_user'))
+
+    return render_template('manage_user.html', forms=user_forms)

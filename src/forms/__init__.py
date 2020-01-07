@@ -24,3 +24,11 @@ class CreateTicketForm(FlaskForm):
     prio = SelectField('Priorität')
     text = TextAreaField('Text')
     submit = SubmitField('Anlegen')
+
+
+class ManageUserForm(FlaskForm):
+    first_name = StringField('Vorname')
+    last_name = StringField('Nachname')
+    email = StringField('Email')
+    user_group = SelectField('User Gruppe')
+    submit = SubmitField('Submit')
