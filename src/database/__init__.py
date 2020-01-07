@@ -66,6 +66,9 @@ class Database:
             # create roles
             #cursor.execute("""INSERT INTO user_group (name) VALUES ('admin'), ('default'), ('processor')""")
 
+            # create default category
+            #cursor.execute("""INSERT INTO category (text) VALUES ('Programmierung'), ('Server'), ('Bug')""")
+
         self.connection.commit()
 
     def get_all(self, table):
