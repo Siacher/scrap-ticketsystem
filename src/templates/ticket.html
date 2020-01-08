@@ -27,5 +27,41 @@
                         {{ ticket['text'] }}
                     </textarea>
                 </div>
+
+                <div class="form-group">
+                    <label>Kommentare</label>
+                        {% for comment in comments %}
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ comment['header'] }}</h5>
+                                    <p class="card-text">{{ comment['text'] }}</p>
+                                    <div class="card-creator text-right">{{ comment['first_name'] }} {{ comment['last_name'] }}</div>
+                                    <p class="card-date text-right">{{ comment['created_at'] }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                </div>
+
+                <!--<button type="button" class="btn btn-dark">Kommentar hinzufügen</button>-->
+
+                <div class="card-header">
+                    Ticket kommentieren
+                </div>
+                <div class="card-body">
+
+                    <form action="" method="post" novalidate>
+                        {{ form.hidden_tag() }}
+                        <p>
+                            {{ form.header.label }}<br>
+                            {{ form.header(size=32) }}
+                        </p>
+                        <p>
+                            {{ form.text.label }}<br>
+                            {{ form.text(size=32) }}
+                        </p>
+                        <p>{{ form.submit() }}</p>
+                    </form>
+                </div>
             </div>
+    </div>
 {% endblock %}

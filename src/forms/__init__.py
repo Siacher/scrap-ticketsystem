@@ -46,3 +46,9 @@ class ManagePrioForm(FlaskForm):
     color = ColorField('Farbe')
     prio = StringField('Priorität')
     submit = SubmitField('Speichern')
+
+
+class CreateCommentForm(FlaskForm):
+    header = StringField('Überschrift')
+    text = StringField('Text')
+    submit = SubmitField('Kommentieren')

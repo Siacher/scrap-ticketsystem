@@ -53,11 +53,11 @@ class Database:
 
             # create table comment
             cursor.execute(
-                """CREATE TABLE IF NOT EXISTS comment (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, header VARCHAR(255), text VARCHAR(500), created_by INT, created_at DATETIME, FOREIGN KEY (created_by) REFERENCES user(id))""")
+                """CREATE TABLE IF NOT EXISTS comment (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, header VARCHAR(255), text VARCHAR(500), created_by INT, created_at DATETIME, ticket_id INT, FOREIGN KEY (created_by) REFERENCES user(id), FOREIGN KEY (ticket_id) REFERENCES ticket(id))""")
 
             # create table ticket
             cursor.execute(
-                """CREATE TABLE IF NOT EXISTS ticket (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, header VARCHAR(255), text VARCHAR(500), category_id INT, status_id INT, comment_id INT, child_ticket INT, prio_id INT, assign_to INT, created_by INT, FOREIGN KEY (category_id) REFERENCES category(id), FOREIGN KEY (status_id) REFERENCES status(id), FOREIGN KEY (comment_id) REFERENCES comment(id), FOREIGN KEY (child_ticket) REFERENCES ticket(id), FOREIGN KEY (prio_id) REFERENCES prio(id), FOREIGN KEY (assign_to) REFERENCES user(id), FOREIGN KEY (created_by) REFERENCES user(id))""")
+                """CREATE TABLE IF NOT EXISTS ticket (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, header VARCHAR(255), text VARCHAR(500), category_id INT, status_id INT, child_ticket INT, prio_id INT, assign_to INT, created_by INT, FOREIGN KEY (category_id) REFERENCES category(id), FOREIGN KEY (status_id) REFERENCES status(id), FOREIGN KEY (child_ticket) REFERENCES ticket(id), FOREIGN KEY (prio_id) REFERENCES prio(id), FOREIGN KEY (assign_to) REFERENCES user(id), FOREIGN KEY (created_by) REFERENCES user(id))""")
 
             # create table label_in_ticket
             cursor.execute("""CREATE TABLE IF NOT EXISTS label_in_tabel_(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, ticket INT, label INT, FOREIGN KEY (ticket) REFERENCES ticket(id), FOREIGN KEY (label) REFERENCES label(id))""")
@@ -87,3 +87,12 @@ class Database:
             cursor.execute(sql)
             result = cursor.fetchone()
             return result
+
+    def get_all_join_ticket_id(self, field, o_field):
+        with self.connection.cursor() as cursor:
+            sql = f"SELECT comment.header, comment.text, comment.created_at, user.first_name, user.last_name FROM comment JOIN {field} ON ticket.id = comment.{o_field} JOIN user ON user.id = comment.created_by"
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            return result
+
+# user.first_name, user.last_name
