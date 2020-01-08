@@ -73,7 +73,7 @@ def login():
                 print("wrong password")
                 return redirect(url_for('index.login'))
 
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form, login=True)
 
 
 @index_route.route('/logout', methods=['GET'])
@@ -112,7 +112,7 @@ def ticket(_id):
         cursor.execute(sql, (_id,))
         result = cursor.fetchone()
 
-    return render_template('ticket.html', ticket=result)
+    return render_template('ticket.html', ticket=result, subsite=True)
 
 
 @index_route.route('/create_ticket', methods=['GET', 'POST'])
@@ -140,7 +140,7 @@ def create_ticket():
         db.connection.commit()
         return redirect(url_for('index.index'))
 
-    return render_template('create_ticket.html', form=form)
+    return render_template('create_ticket.html', form=form, subsite=True)
 
 
 @index_route.route('/manage_category', methods=['GET', 'POST'])
@@ -166,7 +166,7 @@ def manage_category():
 
         db.connection.commit()
 
-    return render_template('manage_category.html', form=form, categories=categories)
+    return render_template('manage_category.html', form=form, categories=categories, subsite=True)
 
 
 @index_route.route('/manage_prio', methods=['GET', 'POST'])
@@ -193,7 +193,7 @@ def manage_prio():
 
         db.connection.commit()
 
-    return render_template('manage_prio.html', form=form, prio=prio)
+    return render_template('manage_prio.html', form=form, prio=prio, subsite=True)
 
 
 @index_route.route('/create_priority', methods=['GET'])
@@ -239,4 +239,4 @@ def manage_user():
     if update:
         redirect(url_for('index.manage_user'))
 
-    return render_template('manage_user.html', forms=user_forms)
+    return render_template('manage_user.html', forms=user_forms, subsite=True)

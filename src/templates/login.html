@@ -1,23 +1,24 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block login %}
+    <div class="justify-content-center">
+        <div class="card" style="width: 50%">
+            <div class="card-header">
+                Sign In
+            </div>
+            <div class="card-body">
+                <form action="" method="post" novalidate>
+                    {{ form.hidden_tag() }}
+                    <p class="card-text"> {{ form.email.label }} </p>
+                    <p> {{ form.email(size=32, class_="form-control") }} </p>
 
-    <div class="card">
-        <div class="card-header">
-            Sign In
-        </div>
-        <div class="card-body">
-            <form action="" method="post" novalidate>
-                {{ form.hidden_tag() }}
-                <p class="card-text"> {{ form.email.label }} </p>
-                <p> {{ form.email(size=32) }} </p>
+                    <p class="card-text">  {{ form.passwort.label }} </p>
+                    <p> {{ form.passwort(size=32, class_="form-control") }} </p>
 
-                <p class="card-text">  {{ form.passwort.label }} </p>
-                <p> {{ form.passwort(size=32) }} </p>
-
-                <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
-                <p>{{ form.submit() }}</p>
-            </form>
+                    <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+                    <p>{{ form.submit(class_="btn btn-outline-success") }}</p>
+                </form>
+            </div>
         </div>
     </div>
 
