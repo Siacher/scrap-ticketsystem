@@ -21,8 +21,8 @@ def insert():
     data = request.get_json()
 
     with db.connection.cursor() as cursor:
-        sql = "INSERT INTO comment(header, text, created_by, created_at) VALUES (%s, %s, %s, %s)"
-        cursor.execute(sql, (data['header'], data['text'], data['created_by'], data['created_at']))
+        sql = "INSERT INTO comment(header, text, created_by, created_at, ticket_id) VALUES (%s, %s, %s, %s, %s)"
+        cursor.execute(sql, (data['header'], data['text'], data['created_by'], data['created_at'], data['ticket_id']))
     db.connection.commit()
 
     return jsonify({"message": "ok"})
@@ -33,8 +33,8 @@ def update(_id):
     data = request.get_json()
 
     with db.connection.cursor() as cursor:
-        sql = "UPDATE comment SET header=%s, text=%s, created_by=%s, created_at=%s WHERE id=%s"
-        cursor.execute(sql, (data['header'], data['text'], data['created_by'], data['created_at'], _id))
+        sql = "UPDATE comment SET header=%s, text=%s, created_by=%s, created_at=%s, ticket_id=%s WHERE id=%s"
+        cursor.execute(sql, (data['header'], data['text'], data['created_by'], data['created_at'], data['ticket_id'], _id))
     db.connection.commit()
 
     return jsonify(db.get_one_by_id("comment", _id))

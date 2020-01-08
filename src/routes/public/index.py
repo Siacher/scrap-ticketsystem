@@ -4,8 +4,9 @@ from src.routes.api import db
 from . import LUser
 from src.shared.authentification import Auth
 import bcrypt
+import datetime
 
-from src.forms import LoginForm, RegisterForm, CreateTicketForm, ManageUserForm, ManageCategroyForm, ManagePrioForm
+from src.forms import LoginForm, RegisterForm, CreateTicketForm, ManageUserForm, ManageCategroyForm, ManagePrioForm, CreateCommentForm
 
 index_route = Blueprint('index', __name__)
 
@@ -105,14 +106,30 @@ def register():
     return render_template('register.html', form=form)
 
 
-@index_route.route('/ticket/<_id>', methods=['GET'])
+@index_route.route('/ticket/<_id>', methods=['GET', 'POST'])
 def ticket(_id):
     with db.connection.cursor() as cursor:
         sql = "SELECT t.header as header, t.text as text, p.text as prio, c.text as category FROM ticket as t LEFT JOIN prio as p on t.prio_id = p.id LEFT JOIN category as c on t.category_id = c.id WHERE t.id = %s"
         cursor.execute(sql, (_id,))
         result = cursor.fetchone()
 
-    return render_template('ticket.html', ticket=result)
+    form = CreateCommentForm()
+    if form.is_submitted() and form.submit.data:
+        header = form.header.data
+        text = form.text.data
+        created_at = datetime.datetime.now()
+        created_by = current_user.id
+        ticket_id = _id
+
+        with db.connection.cursor() as cursor:
+            sql = "INSERT INTO comment(header, text, created_at, created_by, ticket_id) VALUES (%s, %s, %s, %s, %s)"
+            cursor.execute(sql, (header, text, created_at, created_by, ticket_id))
+        db.connection.commit()
+        comments = db.get_all_join_ticket_id("ticket", "ticket_id")
+        return redirect(url_for('index.ticket', _id=_id))
+
+    comments = db.get_all_join_ticket_id("ticket", "ticket_id")
+    return render_template('ticket.html', ticket=result, form=form, comments=comments)
 
 
 @index_route.route('/create_ticket', methods=['GET', 'POST'])
