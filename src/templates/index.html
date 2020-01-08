@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+
+
 {% block content %}
 
     <div class="row">
@@ -19,10 +21,10 @@
                         <a class="nav-link" href="/manage_user">User verwalten</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Kategorien verwalten</a>
+                        <a class="nav-link" href="/manage_category">Kategorien verwalten</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Prioritäten verwalten</a>
+                        <a class="nav-link" href="/manage_prio">Prioritäten verwalten</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Statie verwalten</a>
@@ -38,32 +40,10 @@
         </div>
         <div class="col-10-sm">
 
-
-            <div class="row justify-content-center">
-                <div class="col">
-                    <h4>Meine Tickets</h4>
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th scope="col">Header</th>
-                            <th scope="col">Prio</th>
-                            <th scope="col">Category</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for ticket in my_tickets %}
-                            <tr onclick="window.location='/ticket/{{ ticket['id'] }}'">
-                                <td>{{ ticket['header'] }}</td>
-                                <td style="color: {{ ticket['color'] }}">{{ ticket['p.text'] }}</td>
-                                <td> {{ ticket['c.text'] }} </td>
-                            </tr>`
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col">
-                    <h4>Zu bearbeitende Tickets</h4>
-                    <div>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col" aria-hidden="true">
+                        <h4>Meine Tickets</h4>
                         <table class="table">
                             <thead>
                             <tr>
@@ -73,22 +53,44 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for ticket in ass_tickets %}
+                            {% for ticket in my_tickets %}
                                 <tr onclick="window.location='/ticket/{{ ticket['id'] }}'">
                                     <td>{{ ticket['header'] }}</td>
                                     <td style="color: {{ ticket['color'] }}">{{ ticket['p.text'] }}</td>
                                     <td> {{ ticket['c.text'] }} </td>
-                                </tr>`
+                                </tr>
                             {% endfor %}
                             </tbody>
                         </table>
                     </div>
+                    <div class="col">
+                        <h4>Zu bearbeitende Tickets</h4>
+                        <div>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Header</th>
+                                    <th scope="col">Prio</th>
+                                    <th scope="col">Category</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for ticket in ass_tickets %}
+                                    <tr onclick="window.location='/ticket/{{ ticket['id'] }}'">
+                                        <td>{{ ticket['header'] }}</td>
+                                        <td style="color: {{ ticket['color'] }}">{{ ticket['p.text'] }}</td>
+                                        <td> {{ ticket['c.text'] }} </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
 
+                    </div>
                 </div>
             </div>
+
         </div>
-
-
     </div>
     </div>
 
