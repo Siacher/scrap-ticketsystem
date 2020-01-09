@@ -150,9 +150,13 @@ def create_ticket():
     category_return = db.get_all("category")
     category = [(i['id'], i['text']) for i in category_return]
 
+    status_return = db.get_all("status")
+    status = [(i['id'], i['text']) for i in status_return]
+
     form = CreateTicketForm()
     form.prio.choices = prio
     form.category.choices = category
+    form.status.choices = status
 
     if form.is_submitted():
         header = form.header.data

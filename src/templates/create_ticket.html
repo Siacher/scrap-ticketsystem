@@ -2,33 +2,41 @@
 
 {% block content %}
 
-    <div class="container" style="margin-top: 30px;">
-        <div class="card-header">
-            Ticket anlegen
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <h5 class="card-title">{{ form.header.label }}</h5>
+            <p>{{ form.header(size=32, class_="form-control") }}</p>
         </div>
-        <div class="card-body">
+        <br>
 
-            <form action="" method="post" novalidate>
-                {{ form.hidden_tag() }}
-                <p>
-                    {{ form.header.label }}<br>
-                    {{ form.header(size=32) }}
-                </p>
-                <p>
-                    {{ form.category.label }}<br>
-                    {{ form.category() }}
-                </p>
-                <p>
-                    {{ form.prio.label }}<br>
-                    {{ form.prio() }}
-                </p>
-                <p>
-                    {{ form.text.label }}<br>
-                    {{ form.text(size=32) }}
-                </p>
-                <p>{{ form.submit() }}</p>
-            </form>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <h5 class="card-title">{{ form.category.label }}</h5>
+                    <p>{{ form.category(class_="form-control") }}</p>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <h5 class="card-title">{{ form.prio.label }}</h5>
+                    <p>{{ form.prio(class_="form-control") }}</p>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <h5 class="card-title">{{ form.status.label }}</h5>
+                    <p>{{ form.status(class_="form-control") }}</p>
+                </div>
+            </div>
         </div>
-    </div>
+
+        <div class="form-group">
+            <h5 class="card-title">{{ form.text.label }}</h5>
+            <p>{{ form.text(size=32, class_="form-control") }}</p>
+        </div>
+        <br>
+        <p>{{ form.submit(class_="btn btn-primary") }}</p>
+    </form>
 
 {% endblock %}

@@ -24,6 +24,7 @@ class CreateTicketForm(FlaskForm):
     header =  StringField('Überschrift')
     category = SelectField('Kategorie')
     prio = SelectField('Priorität')
+    status = SelectField('Status')
     text = TextAreaField('Text')
     submit = SubmitField('Anlegen')
 
