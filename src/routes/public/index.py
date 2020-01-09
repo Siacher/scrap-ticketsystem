@@ -8,6 +8,14 @@ import datetime
 
 from src.forms import LoginForm, RegisterForm, CreateTicketForm, ManageUserForm, ManageCategroyForm, ManagePrioForm, CreateCommentForm
 
+from jinja2 import Environment as Jinja2Environment
+from webassets import Environment as AssetsEnvironment
+from webassets.ext.jinja2 import AssetsExtension
+
+assets_env = AssetsEnvironment('./static', '/')
+jinja2_env = Jinja2Environment(extensions=[AssetsExtension])
+jinja2_env.assets_environment = assets_env
+
 index_route = Blueprint('index', __name__)
 
 
