@@ -64,9 +64,11 @@ bundles = {
 }
 
 assets = Environment(app)
-assets.debug = True
-assets.init_app(app)
+assets.debug = False
 
+
+
+assets.init_app(app)
 assets.register(bundles)
 
 login.init_app(app)
