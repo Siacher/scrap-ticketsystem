@@ -8,6 +8,9 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <script src="https://kit.fontawesome.com/22484b22ca.js" crossorigin="anonymous"></script>
+    {% assets "css/style.css" %}
+    <script src="{{ ASSET_URL }}"></script>
+    {% endassets %}
 
 </head>
 <body>
@@ -26,7 +29,7 @@
         {% block login %}{% endblock %}
     {% else %}
         <div class="row">
-            <div class="col-2-sm">
+            <div class="col-sm-2">
                 <div class="card" style="height: 100%">
                     <div class="card-header text-center">
                         Menü
@@ -74,7 +77,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-10-sm">
+            <div class="col-sm-10">
                 <div class="card d-flex justify-content-center">
                     <div class="card-header text-center">
                         &nbsp;
