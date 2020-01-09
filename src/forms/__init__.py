@@ -48,6 +48,13 @@ class ManagePrioForm(FlaskForm):
     submit = SubmitField('Speichern')
 
 
+class ManageStatusForm(FlaskForm):
+    text = StringField('Name')
+    color = ColorField('Farbe')
+    completion = StringField('Fertigstellungsgrad')
+    submit = SubmitField('Speichern')
+
+
 class CreateCommentForm(FlaskForm):
     header = StringField('Überschrift')
     text = StringField('Text')

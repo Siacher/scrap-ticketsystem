@@ -6,7 +6,7 @@ from src.shared.authentification import Auth
 import bcrypt
 import datetime
 
-from src.forms import LoginForm, RegisterForm, CreateTicketForm, ManageUserForm, ManageCategroyForm, ManagePrioForm, CreateCommentForm
+from src.forms import LoginForm, RegisterForm, CreateTicketForm, ManageUserForm, ManageCategroyForm, ManagePrioForm, ManageStatusForm, CreateCommentForm
 
 from jinja2 import Environment as Jinja2Environment
 from webassets import Environment as AssetsEnvironment
@@ -221,9 +221,30 @@ def manage_prio():
     return render_template('manage_prio.html', form=form, prio=prio, subsite=True)
 
 
-@index_route.route('/create_priority', methods=['GET'])
-def create_priority():
-    return render_template('create_priority.html')
+@index_route.route('/manage_status', methods=['GET', 'POST'])
+def manage_status():
+
+    with db.connection.cursor() as cursor:
+        sql = "SELECT * FROM status"
+        cursor.execute(sql)
+
+        status = cursor.fetchall()
+
+        form = ManageStatusForm()
+        if form.submit.data and form.is_submitted():
+            sql = "INSERT INTO status(text, completion, color) VALUES (%s, %s, %s)"
+            cursor.execute(sql, (form.text.data, form.completion.data, str(form.color.data)))
+            return redirect(url_for('index.manage_status'))
+
+        if request.method == 'POST' and request.form['delete']:
+            status_id = request.form['delete']
+            sql = "DELETE FROM status WHERE id = %s"
+            cursor.execute(sql, (status_id,))
+            return redirect(url_for('index.manage_status'))
+
+        db.connection.commit()
+
+    return render_template('manage_status.html', form=form, status=status, subsite=True)
 
 
 @index_route.route('/manage_user', methods=['GET', 'POST'])
