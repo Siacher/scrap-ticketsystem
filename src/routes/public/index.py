@@ -135,10 +135,10 @@ def ticket(_id):
             sql = "INSERT INTO comment(header, text, created_at, created_by, ticket_id) VALUES (%s, %s, %s, %s, %s)"
             cursor.execute(sql, (header, text, created_at, created_by, ticket_id))
         db.connection.commit()
-        comments = db.get_all_join_ticket_id("ticket", "ticket_id")
+        comments = db.get_all_join_ticket_id(ticket_id)
         return redirect(url_for('index.ticket', _id=_id))
 
-    comments = db.get_all_join_ticket_id("ticket", "ticket_id")
+    comments = db.get_all_join_ticket_id(_id)
     return render_template('ticket.html', ticket=result, form=form, comments=comments, subsite=True)
 
 

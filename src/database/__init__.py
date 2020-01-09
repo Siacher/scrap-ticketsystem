@@ -88,9 +88,9 @@ class Database:
             result = cursor.fetchone()
             return result
 
-    def get_all_join_ticket_id(self, field, o_field):
+    def get_all_join_ticket_id(self, _id):
         with self.connection.cursor() as cursor:
-            sql = f"SELECT comment.header, comment.text, comment.created_at, user.first_name, user.last_name FROM comment JOIN {field} ON ticket.id = comment.{o_field} JOIN user ON user.id = comment.created_by"
+            sql = f"SELECT comment.header, comment.text, comment.created_at, user.first_name, user.last_name FROM comment JOIN ticket ON ticket.id = comment.ticket_id JOIN user ON user.id = comment.created_by WHERE ticket.id = {_id}"
             cursor.execute(sql)
             result = cursor.fetchall()
             return result
