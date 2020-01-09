@@ -28,15 +28,15 @@
                     </textarea>
             </div>
 
-            <div class="form-group">
+            <div class="form-group comment">
                 <label>Kommentare</label>
                 {% for comment in comments %}
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">{{ comment['header'] }}</h5>
                             <p class="card-text">{{ comment['text'] }}</p>
-                            <div class="card-creator text-right">{{ comment['first_name'] }} {{ comment['last_name'] }}</div>
-                            <p class="card-date text-right">{{ comment['created_at'] }}</p>
+                            <div class="creator text-right">{{ comment['first_name'] }} {{ comment['last_name'] }}</div>
+                            <p class="date text-right">{{ comment['created_at'] }}</p>
                         </div>
                     </div>
                 {% endfor %}
@@ -56,9 +56,9 @@
 
             <form action="" method="post" novalidate>
                 {{ form.hidden_tag() }}
-                <h5 class="card-title"> {{ form.header.label }}</h5>
+                <h5 class="card-header"> {{ form.header.label }}</h5>
                 <p>{{ form.header(size=32, class_="form-control") }}</p>
-                <h5 class="card-title"> {{ form.text.label }}</h5>
+                <h5 class="card-text"> {{ form.text.label }}</h5>
                 <p>{{ form.text(size=32, class_="form-control") }}</p>
                 <p>{{ form.submit(class_="btn btn-primary") }}</p>
             </form>
