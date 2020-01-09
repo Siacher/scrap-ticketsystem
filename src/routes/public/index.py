@@ -5,12 +5,14 @@ from . import LUser
 from src.shared.authentification import Auth
 import bcrypt
 import datetime
+import scss
 
 from src.forms import LoginForm, RegisterForm, CreateTicketForm, ManageUserForm, ManageCategroyForm, ManagePrioForm, ManageStatusForm, CreateCommentForm
 
 from jinja2 import Environment as Jinja2Environment
 from webassets import Environment as AssetsEnvironment
 from webassets.ext.jinja2 import AssetsExtension
+from scss import Compiler
 
 assets_env = AssetsEnvironment('./static', '/')
 jinja2_env = Jinja2Environment(extensions=[AssetsExtension])

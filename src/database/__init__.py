@@ -94,5 +94,3 @@ class Database:
             cursor.execute(sql)
             result = cursor.fetchall()
             return result
-
-# user.first_name, user.last_name
