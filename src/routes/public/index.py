@@ -293,3 +293,19 @@ def manage_user():
         redirect(url_for('index.manage_user'))
 
     return render_template('manage_user.html', forms=user_forms, subsite=True)
+
+
+@index_route.route('/kanban', methods=['GET', 'POST'])
+def kanban():
+    with db.connection.cursor() as cursor:
+        sql = "SELECT id, text, color FROM status ORDER BY completion"
+        cursor.execute(sql)
+        status = cursor.fetchall()
+
+        for stat in status:
+            sql = "SELECT header, ticket.id, c.email, a.email FROM ticket LEFT JOIN user as c ON ticket.created_by = c.id LEFT JOIN user as a ON ticket.assign_to = a.id WHERE status_id = %s"
+            cursor.execute(sql, (stat['id'],))
+            stat['tickets'] = cursor.fetchall()
+
+    return render_template('kanban.html', subsite=True, status=status)
+
