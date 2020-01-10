@@ -58,5 +58,5 @@ class ManageStatusForm(FlaskForm):
 
 class CreateCommentForm(FlaskForm):
     header = StringField('Überschrift')
-    text = StringField('Text')
+    text = TextAreaField('Text')
     submit = SubmitField('Kommentieren')

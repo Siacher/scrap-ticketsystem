@@ -119,7 +119,7 @@ def register():
 @index_route.route('/ticket/<_id>', methods=['GET', 'POST'])
 def ticket(_id):
     with db.connection.cursor() as cursor:
-        sql = "SELECT t.header as header, t.text as text, p.text as prio, c.text as category FROM ticket as t LEFT JOIN prio as p on t.prio_id = p.id LEFT JOIN category as c on t.category_id = c.id WHERE t.id = %s"
+        sql = "SELECT t.header as header, t.text as text, p.text as prio, p.color as prio_color, c.text as category, s.text as status, s.color as status_color FROM ticket as t LEFT JOIN prio as p on t.prio_id = p.id LEFT JOIN category as c on t.category_id = c.id LEFT JOIN status as s on t.status_id = s.id WHERE t.id = %s"
         cursor.execute(sql, (_id,))
         result = cursor.fetchone()
 
@@ -163,11 +163,12 @@ def create_ticket():
         text = form.text.data
         prio_id = form.prio.data
         category_id = form.category.data
+        status_id = form.status.data
         user_id = current_user.id
 
         with db.connection.cursor() as cursor:
-            sql = "INSERT INTO ticket(header, text,  category_id, prio_id, created_by) VALUES (%s, %s, %s, %s, %s)"
-            cursor.execute(sql, (header, text, category_id, prio_id, user_id))
+            sql = "INSERT INTO ticket(header, text,  category_id, prio_id, status_id, created_by) VALUES (%s, %s, %s, %s, %s, %s)"
+            cursor.execute(sql, (header, text, category_id, prio_id, status_id, user_id))
         db.connection.commit()
         return redirect(url_for('index.index'))
 
