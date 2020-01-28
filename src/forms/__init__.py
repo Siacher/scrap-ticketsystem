@@ -4,7 +4,6 @@ from wtforms.validators import DataRequired, Email
 from wtforms_components import ColorField
 
 
-
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
     passwort = PasswordField('Passwort', validators=[DataRequired()])
@@ -21,12 +20,22 @@ class RegisterForm(FlaskForm):
 
 
 class CreateTicketForm(FlaskForm):
-    header =  StringField('Überschrift')
+    header = StringField('Überschrift')
     category = SelectField('Kategorie')
     prio = SelectField('Priorität')
     status = SelectField('Status')
     text = TextAreaField('Text')
     submit = SubmitField('Anlegen')
+
+
+class UpdateTicketForm(FlaskForm):
+    header =  StringField('Überschrift')
+    category = SelectField('Kategorie')
+    prio = SelectField('Priorität')
+    status = SelectField('Status')
+    user = SelectField('Zugeortneter Benutzer')
+    text = TextAreaField('Text')
+    submit = SubmitField('Update')
 
 
 class ManageUserForm(FlaskForm):

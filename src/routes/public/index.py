@@ -7,7 +7,7 @@ import bcrypt
 import datetime
 import scss
 
-from src.forms import LoginForm, RegisterForm, CreateTicketForm, ManageUserForm, ManageCategroyForm, ManagePrioForm, ManageStatusForm, CreateCommentForm
+from src.forms import LoginForm, RegisterForm, CreateTicketForm, ManageUserForm, ManageCategroyForm, ManagePrioForm, ManageStatusForm, CreateCommentForm, UpdateTicketForm
 
 from jinja2 import Environment as Jinja2Environment
 from webassets import Environment as AssetsEnvironment
@@ -143,7 +143,52 @@ def ticket(_id):
         return redirect(url_for('index.ticket', _id=_id))
 
     comments = db.get_all_join_ticket_id(_id)
-    return render_template('ticket.html', ticket=result, form=form, comments=comments, subsite=True)
+    return render_template('ticket.html', ticket=result, form=form, comments=comments, subsite=True, _ticket=_id)
+
+
+@index_route.route('/ticket/<_id>/update', methods=['GET', 'POST'])
+def update_ticket(_id):
+    with db.connection.cursor() as cursor:
+        sql = "SELECT t.header as header, t.text as text, p.text as prio, p.color as prio_color, c.text as category, s.text as status, s.color as status_color FROM ticket as t LEFT JOIN prio as p on t.prio_id = p.id LEFT JOIN category as c on t.category_id = c.id LEFT JOIN status as s on t.status_id = s.id WHERE t.id = %s"
+        cursor.execute(sql, (_id,))
+        result = cursor.fetchone()
+
+    prio_return = db.get_all("prio")
+    prio = [(i['id'], i['text']) for i in prio_return]
+
+    category_return = db.get_all("category")
+    category = [(i['id'], i['text']) for i in category_return]
+
+    user_return = db.get_all("user")
+    user = [(i['id'],  f"{i['first_name']} {i['last_name']} | {i['email']}") for i in user_return]
+
+    status_return = db.get_all("status")
+    status = [(i['id'], i['text']) for i in status_return]
+
+    form = UpdateTicketForm()
+    form.prio.choices = prio
+    form.category.choices = category
+    form.status.choices = status
+    form.user.choices = user
+
+    form.header.data = result["header"]
+    form.text.data = result["text"]
+
+    if form.is_submitted():
+        header = form.header.data
+        text = form.text.data
+        prio_id = form.prio.data
+        category_id = form.category.data
+        status_id = form.status.data
+        user_id = form.user.data
+
+        with db.connection.cursor() as cursor:
+            sql = "UPDATE ticket set header = %s, text = %s,  category_id = %s, prio_id= %s, status_id= %s, assign_to= %s  WHERE ticket.id = %s "
+            cursor.execute(sql, (header, text, category_id, prio_id, status_id, user_id, _id))
+        db.connection.commit()
+        return redirect(url_for('index.index'))
+
+    return render_template('update_ticket.html', form=form, subsite=True)
 
 
 @index_route.route('/create_ticket', methods=['GET', 'POST'])

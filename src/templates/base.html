@@ -41,6 +41,16 @@
                                 <li class="nav-item">
                                     <a class="nav-link card-text" href="/">Zurück</a>
                                 </li>
+
+                                {% if ticket %}
+                                    <li class="nav-item">
+                                        <hr>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link card-text" href="./{{ _ticket }}/update">Bearbeiten</a>
+                                    </li>
+                                {% endif %}
+
                             {% else %}
                                 <li class="nav-item">
                                     <a class="nav-link card-text" href="/create_ticket">Ticket anlegen</a>
