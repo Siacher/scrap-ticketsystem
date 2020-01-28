@@ -54,7 +54,11 @@ def index():
             cursor.execute(sql, (current_user.id,))
             ass_tickets = cursor.fetchall()
 
-    return render_template('index.html', my_tickets=my_tickets, ass_tickets=ass_tickets, user_group=user_group)
+            sql = "SELECT * FROM ticket as t LEFT JOIN prio as p on t.prio_id = p.id LEFT JOIN category as c on t.category_id = c.id WHERE t.assign_to = NULL AND t.created_by != %s"
+            cursor.execute(sql, (current_user.id,))
+            not_ass_tickets = cursor.fetchall()
+
+    return render_template('index.html', my_tickets=my_tickets, ass_tickets=ass_tickets, not_ass_tickets=not_ass_tickets, user_group=user_group)
 
 
 @index_route.route('/login', methods=['GET', 'POST'])
