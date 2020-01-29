@@ -9,6 +9,8 @@ import scss
 
 from src.forms import LoginForm, RegisterForm, CreateTicketForm, ManageUserForm, ManageCategroyForm, ManagePrioForm, ManageStatusForm, CreateCommentForm, UpdateTicketForm
 
+from src.shared.choiceSort import choice_sort
+
 from jinja2 import Environment as Jinja2Environment
 from webassets import Environment as AssetsEnvironment
 from webassets.ext.jinja2 import AssetsExtension
@@ -154,21 +156,24 @@ def update_ticket(_id):
         result = cursor.fetchone()
 
     prio_return = db.get_all("prio")
-    prio = [(i['id'], i['text']) for i in prio_return]
+    prio = [i['text'] for i in prio_return]
+    _prio = choice_sort(prio, result['prio'])
 
     category_return = db.get_all("category")
-    category = [(i['id'], i['text']) for i in category_return]
+    category = [i['text'] for i in category_return]
+    _category = choice_sort(category, result['category'])
 
     user_return = db.get_all("user")
     user = [(i['id'],  f"{i['first_name']} {i['last_name']} | {i['email']}") for i in user_return]
 
     status_return = db.get_all("status")
-    status = [(i['id'], i['text']) for i in status_return]
+    status = [i['text'] for i in status_return]
+    _status = choice_sort(status, result['status'])
 
     form = UpdateTicketForm()
-    form.prio.choices = prio
-    form.category.choices = category
-    form.status.choices = status
+    form.prio.choices = _prio
+    form.category.choices = _category
+    form.status.choices = _status
     form.user.choices = user
 
     form.header.data = result["header"]
@@ -305,27 +310,25 @@ def manage_status():
 
 @index_route.route('/manage_user', methods=['GET', 'POST'])
 def manage_user():
-    user_group_return = db.get_all("user_group")
-    user_group = [(i['id'], i['name']) for i in user_group_return]
-    user_group.insert(0, (0, ""))
-
     user_forms = []
 
     update = False
 
     with db.connection.cursor() as cursor:
-        sql = 'SELECT u.id, u.first_name , u.last_name, u.email, ug.id as group_id, ug.name FROM user as u JOIN user_in_group as uig on u.id = uig.user_id JOIN user_group as ug on uig.group_id = ug.id'
+        sql = 'SELECT u.id, u.first_name , u.last_name, u.email, ug.id as group_id, ug.name FROM user as u JOIN user_in_group as uig on u.id = uig.user_id LEFT JOIN user_group as ug on uig.group_id = ug.id'
         cursor.execute(sql)
         users = cursor.fetchall()
 
         for user in users:
+            user_group_return = db.get_all("user_group")
+            user_group = [i['name'] for i in user_group_return]
+
             form = ManageUserForm(prefix=user['email'])
             form.first_name.label = user['first_name']
             form.last_name.label = user['last_name']
             form.email.label = user['email']
-            form.user_group.choices = user_group
-            form.user_group.default = user['group_id']
-            form.user_group.label = user['name']
+            _user_group = choice_sort(user_group, user['name'])
+            form.user_group.choices = _user_group
             user_forms.append(form)
 
             if form.submit.data and form.is_submitted():
@@ -333,8 +336,12 @@ def manage_user():
                 cursor.execute(sql, (user['email'],))
                 user_id = cursor.fetchone()['id']
 
+                sql = "SELECT id FROM user_group WHERE name = %s"
+                cursor.execute(sql, (form.user_group.choices[int(form.user_group.data)][1], ))
+                group_id = cursor.fetchone()
+
                 sql = "UPDATE user_in_group SET group_id = %s WHERE user_id = %s AND group_id = %s"
-                cursor.execute(sql, (form.user_group.data, user_id, user['group_id']))
+                cursor.execute(sql, (group_id['id'], user_id, user['group_id']  ))
                 update = True
     db.connection.commit()
 
