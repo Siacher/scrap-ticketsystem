@@ -116,6 +116,11 @@ def register():
             sql = "INSERT INTO user_in_group(user_id, group_id) VALUES (%s, %s)"
             cursor.execute(sql, (result['id'], 2))
 
+            company_sql = "INSERT INTO company(name) VALUES (%s)"
+            cursor.execute(company_sql, (
+                form.company.data
+            ))
+
             db.connection.commit()
             return redirect(url_for('index.login'))
 
