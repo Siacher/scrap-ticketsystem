@@ -2,12 +2,14 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_user, logout_user
 from src.routes.api import db
 from . import LUser
+from pymysql.err import IntegrityError
 from src.shared.authentification import Auth
 import bcrypt
 import datetime
 import scss
 
-from src.forms import LoginForm, RegisterForm, CreateTicketForm, ManageUserForm, ManageCategroyForm, ManagePrioForm, ManageStatusForm, CreateCommentForm, UpdateTicketForm
+from src.forms import LoginForm, RegisterForm, CreateTicketForm, ManageUserForm, ManageCategroyForm, ManagePrioForm, \
+    ManageStatusForm, CreateCommentForm, UpdateTicketForm
 
 from src.shared.choiceSort import choice_sort
 
@@ -60,7 +62,8 @@ def index():
             cursor.execute(sql, (current_user.id,))
             not_ass_tickets = cursor.fetchall()
 
-    return render_template('index.html', my_tickets=my_tickets, ass_tickets=ass_tickets, not_ass_tickets=not_ass_tickets, user_group=user_group)
+    return render_template('index.html', my_tickets=my_tickets, ass_tickets=ass_tickets,
+                           not_ass_tickets=not_ass_tickets, user_group=user_group)
 
 
 @index_route.route('/login', methods=['GET', 'POST'])
@@ -106,7 +109,7 @@ def register():
         with db.connection.cursor() as cursor:
             sql = "INSERT INTO user(email, password, first_name, last_name) VALUES (%s, %s, %s, %s)"
             cursor.execute(sql, (
-            form.email.data, generate_hash(form.passwort.data), form.first_name.data, form.last_name.data))
+                form.email.data, generate_hash(form.passwort.data), form.first_name.data, form.last_name.data))
 
             sql = "SELECT * FROM user WHERE email=%s"
             cursor.execute(sql, (form.email.data,))
@@ -169,7 +172,7 @@ def update_ticket(_id):
     _category = choice_sort(category, result['category'])
 
     user_return = db.get_all("user")
-    user = [(i['id'],  f"{i['first_name']} {i['last_name']} | {i['email']}") for i in user_return]
+    user = [(i['id'], f"{i['first_name']} {i['last_name']} | {i['email']}") for i in user_return]
 
     status_return = db.get_all("status")
     status = [i['text'] for i in status_return]
@@ -187,16 +190,27 @@ def update_ticket(_id):
     if form.is_submitted():
         header = form.header.data
         text = form.text.data
-        prio_id = form.prio.data
-        category_id = form.category.data
-        status_id = form.status.data
         user_id = form.user.data
-
         with db.connection.cursor() as cursor:
-            sql = "UPDATE ticket set header = %s, text = %s,  category_id = %s, prio_id= %s, status_id= %s, assign_to= %s  WHERE ticket.id = %s "
-            cursor.execute(sql, (header, text, category_id, prio_id, status_id, user_id, _id))
-        db.connection.commit()
-        return redirect(url_for('index.index'))
+            sql = "SELECT id FROM prio WHERE text = %s"
+            cursor.execute(sql, (form.prio.choices[int(form.prio.data)][1],))
+            prio_id = cursor.fetchone()['id']
+
+            sql = "SELECT id FROM status WHERE text = %s"
+            cursor.execute(sql, (form.status.choices[int(form.status.data)][1],))
+            status_id = cursor.fetchone()['id']
+
+            sql = "SELECT id FROM category WHERE text = %s"
+            cursor.execute(sql, (form.category.choices[int(form.category.data)][1],))
+            category_id = cursor.fetchone()['id']
+            try:
+                sql = "UPDATE ticket set header = %s, text = %s,  category_id = %s, prio_id= %s, status_id= %s, assign_to= %s  WHERE ticket.id = %s "
+                cursor.execute(sql, (header, text, category_id, prio_id, status_id, user_id, _id))
+            except IntegrityError as ConstraintError:
+                flash("Kann nicht gelöscht werden. Wird noch verwendet")
+            finally:
+                return redirect(url_for('index.index'))
+    db.connection.commit()
 
     return render_template('update_ticket.html', form=form, subsite=True)
 
@@ -236,7 +250,6 @@ def create_ticket():
 
 @index_route.route('/manage_category', methods=['GET', 'POST'])
 def manage_category():
-
     with db.connection.cursor() as cursor:
         sql = "SELECT * FROM category"
         cursor.execute(sql)
@@ -262,7 +275,6 @@ def manage_category():
 
 @index_route.route('/manage_prio', methods=['GET', 'POST'])
 def manage_prio():
-
     with db.connection.cursor() as cursor:
         sql = "SELECT * FROM prio"
         cursor.execute(sql)
@@ -289,7 +301,6 @@ def manage_prio():
 
 @index_route.route('/manage_status', methods=['GET', 'POST'])
 def manage_status():
-
     with db.connection.cursor() as cursor:
         sql = "SELECT * FROM status"
         cursor.execute(sql)
@@ -297,15 +308,16 @@ def manage_status():
         status = cursor.fetchall()
 
         form = ManageStatusForm()
-        if form.submit.data and form.is_submitted():
-            sql = "INSERT INTO status(text, completion, color) VALUES (%s, %s, %s)"
-            cursor.execute(sql, (form.text.data, form.completion.data, str(form.color.data)))
-            return redirect(url_for('index.manage_status'))
 
         if request.method == 'POST' and request.form['delete']:
             status_id = request.form['delete']
             sql = "DELETE FROM status WHERE id = %s"
             cursor.execute(sql, (status_id,))
+            return redirect(url_for('index.manage_status'))
+
+        if form.submit.data and form.is_submitted():
+            sql = "INSERT INTO status(text, completion, color) VALUES (%s, %s, %s)"
+            cursor.execute(sql, (form.text.data, form.completion.data, str(form.color.data)))
             return redirect(url_for('index.manage_status'))
 
         db.connection.commit()
@@ -342,11 +354,11 @@ def manage_user():
                 user_id = cursor.fetchone()['id']
 
                 sql = "SELECT id FROM user_group WHERE name = %s"
-                cursor.execute(sql, (form.user_group.choices[int(form.user_group.data)][1], ))
+                cursor.execute(sql, (form.user_group.choices[int(form.user_group.data)][1],))
                 group_id = cursor.fetchone()
 
                 sql = "UPDATE user_in_group SET group_id = %s WHERE user_id = %s AND group_id = %s"
-                cursor.execute(sql, (group_id['id'], user_id, user['group_id']  ))
+                cursor.execute(sql, (group_id['id'], user_id, user['group_id']))
                 update = True
     db.connection.commit()
 
@@ -369,4 +381,3 @@ def kanban():
             stat['tickets'] = cursor.fetchall()
 
     return render_template('kanban.html', subsite=True, status=status)
-
