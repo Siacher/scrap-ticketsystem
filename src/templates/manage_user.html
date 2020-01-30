@@ -6,8 +6,7 @@
         <tr>
             <th scope="col">Name</th>
             <th scope="col">Email</th>
-            <th scope="col">Aktuell</th>
-            <th scope="col">Neu</th>
+            <th scope="col">Group</th>
             <th scope="col">Speichern</th>
         </tr>
         </thead>
@@ -18,10 +17,9 @@
                     {{ form.hidden_tag() }}
                     <td> {{ form.first_name.label + " " + form.last_name.label }}</td>
                     <td> {{ form.email.label }}</td>
-                    <td> {{ form.user_group.label }} </td>
-                    <td> {{ form.user_group }}</td>
+                    <td> {{form.user_group(class_="form-control") }}</td>
                     <td>
-                        {{ form.submit }}
+                        {{ form.submit(class_="btn btn-outline-primary") }}
                     </td>
                 </form>
             </tr>
