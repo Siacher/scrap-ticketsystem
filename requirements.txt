@@ -31,3 +31,4 @@ Werkzeug==0.16.0
 wrapt==1.11.2
 WTForms==2.2.1
 WTForms-Components==0.10.4
+python-dotenv==0.10.5

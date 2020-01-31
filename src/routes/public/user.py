@@ -74,7 +74,7 @@ def login():
                 if user is None:
                     flash('Invalid username or password')
                     print("no user")
-                    return redirect(url_for('index.login'))
+                    return redirect(url_for('user.login'))
 
                 if check_hash(form.passwort.data, user['password']):
                     user_login = LUser(user['id'], user['email'], user['first_name'], user['last_name'],

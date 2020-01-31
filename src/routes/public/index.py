@@ -18,7 +18,7 @@ index_route = Blueprint('index', __name__)
 @index_route.route('/', methods=['GET'])
 def index():
     if not current_user.is_authenticated:
-        return redirect(url_for('index.login'))
+        return redirect(url_for('user.login'))
     else:
         with db.connection.cursor() as cursor:
             sql = "SELECT ug.name, ug.id FROM user_group as ug JOIN user_in_group uig on ug.id = uig.group_id JOIN user u on uig.user_id = u.id WHERE u.id = %s"
