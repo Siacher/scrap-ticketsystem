@@ -259,3 +259,4 @@ src/static/css/style.css
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+.elasticbeanstalk
