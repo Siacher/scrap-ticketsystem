@@ -1,13 +1,16 @@
 """database connection and handling"""
+from dotenv import load_dotenv
 
 import pymysql
+import os
 
 
 class Database:
     def __init__(self):
-        host = "localhost"
-        user = "root"
-        password = "password"
+        load_dotenv()
+        host = os.getenv('DB_HOST')
+        user = os.getenv('DB_USER')
+        password = os.getenv('DB_PASS')
 
         self.connection = pymysql.connect(host=host, user=user, password=password, cursorclass=pymysql.cursors.DictCursor)
 
@@ -51,13 +54,14 @@ class Database:
             cursor.execute(
                 """CREATE TABLE IF NOT EXISTS user_in_group (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, user_id INT, group_id INT, FOREIGN KEY (user_id) REFERENCES user(id), FOREIGN KEY (group_id) REFERENCES user_group(id))""")
 
+            # create table ticket
+            cursor.execute(
+                """CREATE TABLE IF NOT EXISTS ticket (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, header VARCHAR(255), text VARCHAR(500), category_id INT, status_id INT, child_ticket INT, prio_id INT, assign_to INT, created_by INT, FOREIGN KEY (category_id) REFERENCES category(id), FOREIGN KEY (status_id) REFERENCES status(id), FOREIGN KEY (child_ticket) REFERENCES ticket(id), FOREIGN KEY (prio_id) REFERENCES prio(id), FOREIGN KEY (assign_to) REFERENCES user(id), FOREIGN KEY (created_by) REFERENCES user(id))""")
+
             # create table comment
             cursor.execute(
                 """CREATE TABLE IF NOT EXISTS comment (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, header VARCHAR(255), text VARCHAR(500), created_by INT, created_at DATETIME, ticket_id INT, FOREIGN KEY (created_by) REFERENCES user(id), FOREIGN KEY (ticket_id) REFERENCES ticket(id))""")
 
-            # create table ticket
-            cursor.execute(
-                """CREATE TABLE IF NOT EXISTS ticket (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, header VARCHAR(255), text VARCHAR(500), category_id INT, status_id INT, child_ticket INT, prio_id INT, assign_to INT, created_by INT, FOREIGN KEY (category_id) REFERENCES category(id), FOREIGN KEY (status_id) REFERENCES status(id), FOREIGN KEY (child_ticket) REFERENCES ticket(id), FOREIGN KEY (prio_id) REFERENCES prio(id), FOREIGN KEY (assign_to) REFERENCES user(id), FOREIGN KEY (created_by) REFERENCES user(id))""")
 
             # create table label_in_ticket
             cursor.execute("""CREATE TABLE IF NOT EXISTS label_in_tabel_(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, ticket INT, label INT, FOREIGN KEY (ticket) REFERENCES ticket(id), FOREIGN KEY (label) REFERENCES label(id))""")
@@ -88,11 +92,9 @@ class Database:
             result = cursor.fetchone()
             return result
 
-    def get_all_join_ticket_id(self, field, o_field):
+    def get_all_join_ticket_id(self, _id):
         with self.connection.cursor() as cursor:
-            sql = f"SELECT comment.header, comment.text, comment.created_at, user.first_name, user.last_name FROM comment JOIN {field} ON ticket.id = comment.{o_field} JOIN user ON user.id = comment.created_by"
+            sql = f"SELECT comment.header, comment.text, comment.created_at, user.first_name, user.last_name FROM comment JOIN ticket ON ticket.id = comment.ticket_id JOIN user ON user.id = comment.created_by WHERE ticket.id = {_id}"
             cursor.execute(sql)
             result = cursor.fetchall()
             return result
-
-# user.first_name, user.last_name

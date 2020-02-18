@@ -8,6 +8,9 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <script src="https://kit.fontawesome.com/22484b22ca.js" crossorigin="anonymous"></script>
+    {% assets "css/style.css" %}
+        <link rel="stylesheet" href="{{ ASSET_URL }}">
+    {% endassets %}
 
 </head>
 <body>
@@ -26,7 +29,7 @@
         {% block login %}{% endblock %}
     {% else %}
         <div class="row">
-            <div class="col-2-sm">
+            <div class="col-sm-2">
                 <div class="card" style="height: 100%">
                     <div class="card-header text-center">
                         Menü
@@ -38,13 +41,23 @@
                                 <li class="nav-item">
                                     <a class="nav-link card-text" href="/">Zurück</a>
                                 </li>
+
+                                {% if ticket %}
+                                    <li class="nav-item">
+                                        <hr>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link card-text" href="./{{ _ticket }}/update">Bearbeiten</a>
+                                    </li>
+                                {% endif %}
+
                             {% else %}
                                 <li class="nav-item">
                                     <a class="nav-link card-text" href="/create_ticket">Ticket anlegen</a>
                                 </li>
                                 {% if user_group == "admin" %}
                                     <li class="nav-item">
-                                        <a class="nav-link card-text" href="#">Alle Tickets anzeigen</a>
+                                        <a class="nav-link card-text" href="/kanban">Alle Tickets anzeigen</a>
                                     </li>
                                     <li class="nav-item">
                                         <hr>
@@ -53,13 +66,13 @@
                                         <a class="nav-link card-text" href="/manage_user">User verwalten</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link card-text" href="/manage_category">Kategorien verwalten</a>
+                                        <a class="nav-link card-text" href="/manage_category">Kategorie verwalten</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link card-text" href="/manage_prio">Prioritäten verwalten</a>
+                                        <a class="nav-link card-text" href="/manage_prio">Priorität verwalten</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link card-text" href="#">Statie verwalten</a>
+                                        <a class="nav-link card-text" href="/manage_status">Status verwalten</a>
                                     </li>
                                 {% endif %}
                                 <li class="nav-item">
@@ -74,7 +87,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-10-sm">
+            <div class="col-sm-10">
+
                 <div class="card d-flex justify-content-center">
                     <div class="card-header text-center">
                         &nbsp;
@@ -85,9 +99,13 @@
                         </div>
                     </div>
                 </div>
+                <br>
+                {% block subcontent %}{% endblock %}
+
             </div>
         </div>
         </div>
+
     {% endif %}
 </body>
 </html>

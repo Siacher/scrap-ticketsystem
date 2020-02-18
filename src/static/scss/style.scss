@@ -1,0 +1,18 @@
+body {
+    .container {
+        max-width: 1600px;
+    }
+    .login {
+        .card {
+            margin: 0 auto;
+        }
+    }
+    
+    // Kommentare
+    .comment {
+        .creator, .date {
+            font-size: 12px;
+            color: gray;
+        }
+    }
+}

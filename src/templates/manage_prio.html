@@ -19,7 +19,7 @@
                     <td>{{ item['prio'] }}</td>
                     <td>
                         <form action="" method="post" name="_delete">
-                            <input type=hidden value="{{ item['id'] }}" name=delete />
+                            <input type=hidden value="{{ item['id'] }}" name="delete"/>
                             <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
                         </form>
                     </td>
@@ -27,26 +27,36 @@
             {% endfor %}
             </tbody>
         </table>
-        <br>
+    </div>
 
-        <div class="card">
+{% endblock %}
+
+{% block subcontent %}
+     <div class="card">
             <div class="card-header">
                 Neue Prio anlegen
             </div>
             <div class="card-body">
                 <form action="" method="post">
-                    <h5 class="card-title">{{ form.text.label }}</h5>
-                    <p class="card-text">{{ form.text(class_="form-control") }}</p>
-                    <h5 class="card-title">{{ form.prio.label }}</h5>
-                    <p class="card-text">{{ form.prio(class_="form-control") }}</p>
-                    <h5 class="card-title">{{ form.color.label }}</h5>
-                    {{ form.color(class_="color-picker btn btn-outline-primary") }}
-                    <br>
-                    <br>
-                    <p>{{ form.submit(class_="btn btn-primary") }}</p>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <h5 class="card-title">{{ form.text.label }}</h5>
+                            <p class="card-text">{{ form.text(class_="form-control") }}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <h5 class="card-title">{{ form.prio.label }}</h5>
+                            <p class="card-text">{{ form.prio(class_="form-control") }}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <h5 class="card-title">{{ form.color.label }}</h5>
+                            {{ form.color(class_="color-picker form-control") }}
+                        </div>
+                        <div class="col-sm-3">
+                            <h5 class="card-title"> &nbsp </h5>
+                            <p>{{ form.submit(class_="btn btn-primary") }}</p>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
-    </div>
-
 {% endblock %}

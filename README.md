@@ -3,6 +3,9 @@ This project is built with:
 1. [Bootstrap 4](https://getbootstrap.com/)
 2. [Flask Framework](https://github.com/pallets/flask)
 
+# pyScss
+For Current Testing: python -m scss < sourcefile.scss > destinationfile.css
+
 ### Prerequisites:
 + [Python 3.8](https://www.python.org/)
 + [Docker](https://www.docker.com/)
