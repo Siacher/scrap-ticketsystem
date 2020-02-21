@@ -8,17 +8,17 @@
                     <div class="card-head">
                         <h5 class="card-header" style="color: {{ lane['color'] }}"> {{ lane['text'] }} </h5>
                     </div>
-                    <div class="card-body">
+                    <div id="status_{{ lane['id'] }}" class="card-body" ondrop="drop(event)" ondragover="allowDrop(event)">
                         {% if lane['tickets'] %}
                             {% for ticket in lane['tickets'] %}
-                                <div onclick="window.location='/ticket/{{ ticket['id'] }}'">
+                                <span id="{{ ticket['id'] }}" draggable="true" ondragstart="drag(event)" onclick="window.location='/ticket/{{ ticket['id'] }}'">
                                     <h5 class="card-title"> {{ ticket['header'] }} </h5>
                                     <small>erstellt von:</small>
                                     <small class="creator">{{ ticket['email'] }}</small>
                                     <br>
                                     <small>bearbeitet:</small>
                                     <small class="creator">{{ ticket['a.email'] }}</small>
-                                </div>
+                                </span>
                                 <hr>
                             {% endfor %}
                         {% endif %}
