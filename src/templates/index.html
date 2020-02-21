@@ -46,28 +46,32 @@
                 </table>
             </div>
         </div>
-    <div class="col">
-            <h4>Nicht zugewiesene Tickets</h4>
-            <div>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th scope="col">Header</th>
-                        <th scope="col">Prio</th>
-                        <th scope="col">Category</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for ticket in not_ass_tickets %}
-                        <tr onclick="window.location='/ticket/{{ ticket['id'] }}'">
-                            <td>{{ ticket['header'] }}</td>
-                            <td style="color: {{ ticket['color'] }}">{{ ticket['p.text'] }}</td>
-                            <td> {{ ticket['c.text'] }} </td>
+        {% if user_group == "admin" %}
+
+
+            <div class="col">
+                <h4>Nicht zugewiesene Tickets</h4>
+                <div>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Header</th>
+                            <th scope="col">Prio</th>
+                            <th scope="col">Category</th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {% for ticket in not_ass_tickets %}
+                            <tr onclick="window.location='/ticket/{{ ticket['id'] }}'">
+                                <td>{{ ticket['header'] }}</td>
+                                <td style="color: {{ ticket['color'] }}">{{ ticket['p.text'] }}</td>
+                                <td> {{ ticket['c.text'] }} </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+        {% endif %}
     </div>
 {% endblock %}

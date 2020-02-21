@@ -130,16 +130,48 @@ def create_ticket():
     return render_template('create_ticket.html', form=form, subsite=True)
 
 
-@index_route.route('/kanban', methods=['GET', 'POST'])
-def kanban():
+@index_route.route('/kanban/<string:tab>', methods=['GET', 'POST'])
+def kanban(tab):
     with db.connection.cursor() as cursor:
-        sql = "SELECT id, text, color FROM status ORDER BY completion"
-        cursor.execute(sql)
-        status = cursor.fetchall()
+        sql = "SELECT ug.name, ug.id FROM user_group as ug JOIN user_in_group uig on ug.id = uig.group_id JOIN user u on uig.user_id = u.id WHERE u.id = %s"
+        cursor.execute(sql, (current_user.id,))
+        group = cursor.fetchone()
 
-        for stat in status:
-            sql = "SELECT header, ticket.id, c.email, a.email FROM ticket LEFT JOIN user as c ON ticket.created_by = c.id LEFT JOIN user as a ON ticket.assign_to = a.id WHERE status_id = %s"
-            cursor.execute(sql, (stat['id'],))
-            stat['tickets'] = cursor.fetchall()
+        user_group = 'default'
+        try:
+            if group['name']:
+                user_group = group['name']
+        except TypeError as NOUSERGROUP:
+            print(NOUSERGROUP)
 
-    return render_template('kanban.html', subsite=True, status=status)
+        if tab == "all":
+            sql = "SELECT id, text, color FROM status ORDER BY completion"
+            cursor.execute(sql)
+            status = cursor.fetchall()
+
+            for stat in status:
+                sql = "SELECT header, ticket.id, c.email, a.email FROM ticket LEFT JOIN user as c ON ticket.created_by = c.id LEFT JOIN user as a ON ticket.assign_to = a.id WHERE status_id = %s"
+                cursor.execute(sql, (stat['id'],))
+                stat['tickets'] = cursor.fetchall()
+
+        if tab == "edit":
+            sql = "SELECT id, text, color FROM status ORDER BY completion"
+            cursor.execute(sql)
+            status = cursor.fetchall()
+
+            for stat in status:
+                sql = "SELECT header, ticket.id, c.email, a.email FROM ticket LEFT JOIN user as c ON ticket.created_by = c.id LEFT JOIN user as a ON ticket.assign_to = a.id WHERE status_id = %s AND ticket.assign_to = %s"
+                cursor.execute(sql, (stat['id'], current_user.id))
+                stat['tickets'] = cursor.fetchall()
+
+        if tab == "my":
+            sql = "SELECT id, text, color FROM status ORDER BY completion"
+            cursor.execute(sql)
+            status = cursor.fetchall()
+
+            for stat in status:
+                sql = "SELECT header, ticket.id, c.email, a.email FROM ticket LEFT JOIN user as c ON ticket.created_by = c.id LEFT JOIN user as a ON ticket.assign_to = a.id WHERE status_id = %s AND ticket.created_by = %s"
+                cursor.execute(sql, (stat['id'], current_user.id))
+                stat['tickets'] = cursor.fetchall()
+
+    return render_template('kanban.html', subsite=True, status=status, tab=tab, user_group=user_group)

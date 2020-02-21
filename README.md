@@ -1,5 +1,11 @@
+
+
+
 # scrap-ticketsystem
-This project is built with:
+
+![Docker Image CI](https://github.com/Siacher/scrap-ticketsystem/workflows/Docker%20Image%20CI/badge.svg)
+
+### This project is built with:
 1. [Bootstrap 4](https://getbootstrap.com/)
 2. [Flask Framework](https://github.com/pallets/flask)
 
